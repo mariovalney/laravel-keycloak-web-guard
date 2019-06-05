@@ -1,8 +1,6 @@
 <p align="center">
-&nbsp;
-        <img src="https://img.shields.io/packagist/v/vizir/laravel-keycloak-web-guard.svg" />
-        <img src="https://img.shields.io/packagist/dt/vizir/laravel-keycloak-web-guard.svg" />
-
+    <img src="https://img.shields.io/packagist/v/vizir/laravel-keycloak-web-guard.svg" />
+    <img src="https://img.shields.io/packagist/dt/vizir/laravel-keycloak-web-guard.svg" />
 </p>
 
 # Keycloak Web Guard for Laravel

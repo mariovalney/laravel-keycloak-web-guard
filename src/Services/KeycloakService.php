@@ -81,7 +81,7 @@ class KeycloakService
             'scope' => 'openid',
             'client_id' => $this->clientId,
             'response_type' => 'code',
-            'redirect_uri' => route('auth.callback'),
+            'redirect_uri' => route('keycloak.callback'),
             'state' => csrf_token(),
         ];
 
@@ -112,7 +112,7 @@ class KeycloakService
             'client_id' => $this->clientId,
             'client_secret' => $this->clientSecret,
             'grant_type' => 'authorization_code',
-            'redirect_uri' => route('auth.callback'),
+            'redirect_uri' => route('keycloak.callback'),
         ];
 
         $token = [];

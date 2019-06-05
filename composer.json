@@ -20,7 +20,10 @@
         "laravel": {
             "providers": [
                 "Vizir\\KeycloakWebGuard\\KeycloakWebGuardServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "KeycloakWeb": "Vizir\\KeycloakWebGuard\\Facades\\KeycloakWeb"
+            }
         }
     }
 }

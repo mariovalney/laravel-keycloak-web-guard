@@ -7,7 +7,7 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Vizir\KeycloakWebGuard\Exceptions\KeycloakCallbackException;
 use Vizir\KeycloakWebGuard\Models\KeycloakUser;
-use Vizir\KeycloakWebGuard\Services\KeycloakService;
+use Vizir\KeycloakWebGuard\Facades\KeycloakWeb;
 
 class KeycloakWebGuard implements Guard
 {
@@ -120,8 +120,7 @@ class KeycloakWebGuard implements Guard
             return false;
         }
 
-        $keycloak = app()->make(KeycloakService::class);
-        $user = $keycloak->getUserProfile($credentials);
+        $user = KeycloakWeb::getUserProfile($credentials);
 
         if (empty($user)) {
             $this->request->session()->forget(self::KEYCLOAK_SESSION);

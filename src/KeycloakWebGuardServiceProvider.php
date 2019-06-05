@@ -5,6 +5,7 @@ namespace Vizir\KeycloakWebGuard;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 use Vizir\KeycloakWebGuard\Auth\Guard\KeycloakWebGuard;
+use Vizir\KeycloakWebGuard\Services\KeycloakService;
 
 class KeycloakWebGuardServiceProvider extends ServiceProvider
 {
@@ -35,6 +36,11 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
         // Keycloak Web Guard
         Auth::extend('keycloak-web', function ($app, $name, array $config) {
             return new KeycloakWebGuard($app->request);
+        });
+
+        // Facades
+        $this->app->bind('keycloak-web', function($app) {
+            return $app->make(KeycloakService::class);
         });
     }
 }

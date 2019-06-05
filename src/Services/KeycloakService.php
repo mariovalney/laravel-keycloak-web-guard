@@ -134,10 +134,13 @@ class KeycloakService
         $params = [
             'code' => $code,
             'client_id' => $this->clientId,
-            'client_secret' => $this->clientSecret,
             'grant_type' => 'authorization_code',
             'redirect_uri' => route('keycloak.callback'),
         ];
+
+        if (! empty($this->clientSecret)) {
+            $params['client_secret'] = $this->clientSecret;
+        }
 
         $token = [];
 

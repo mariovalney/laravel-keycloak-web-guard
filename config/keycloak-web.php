@@ -18,12 +18,12 @@ return [
     /**
      * The Keycloak Server realm public key (string).
      *
-     * @see  Keycloak >> Realm Settings >> Keys >> RS256 >> Public Key
+     * @see Keycloak >> Realm Settings >> Keys >> RS256 >> Public Key
      */
     'realm_public_key' => env('KEYCLOAK_REALM_PUBLIC_KEY', null),
 
     /**
-     * Keycloak Client Secret
+     * Keycloak Client ID
      *
      * @see Keycloak >> Clients >> Installation
      */

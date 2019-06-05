@@ -35,4 +35,12 @@ return [
      * @see Keycloak >> Clients >> Installation
      */
     'client_secret' => env('KEYCLOAK_CLIENT_SECRET', null),
+
+    /**
+     * We can cache the OpenId Configuration
+     * The result from /realms/{realm-name}/.well-known/openid-configuration
+     *
+     * @link https://www.keycloak.org/docs/3.2/securing_apps/topics/oidc/oidc-generic.html
+     */
+    'cache_openid' => env('KEYCLOAK_CACHE_OPENID', false),
 ];

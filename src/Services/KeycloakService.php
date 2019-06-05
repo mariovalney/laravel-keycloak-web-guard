@@ -2,15 +2,21 @@
 
 namespace Vizir\KeycloakWebGuard\Services;
 
-use Config;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 use Vizir\KeycloakWebGuard\Auth\Guard\KeycloakWebGuard;
 
 class KeycloakService
 {
+    /**
+     * The Cache Key for OpenId Configuration
+     */
+    const KEYCLOAK_OPENID_CACHE_KEY = 'keycloak_web_guard_openid';
+
     /**
      * Keycloak URL
      *
@@ -189,6 +195,18 @@ class KeycloakService
      */
     private function getOpenIdConfiguration()
     {
+        $useCache = Config::get('keycloak-web.cache_openid', false);
+
+        // From cache?
+        if ($useCache) {
+            $configuration = Cache::get(self::KEYCLOAK_OPENID_CACHE_KEY, []);
+
+            if (! empty($configuration)) {
+                return $configuration;
+            }
+        }
+
+        // Request if cache empty or not using
         $url = $this->baseUrl . '/realms/' . $this->realm;
         $url = $url . '/.well-known/openid-configuration';
 
@@ -205,6 +223,11 @@ class KeycloakService
             $this->logException($e);
 
             throw new \Exception('[Keycloak Error] It was not possible to load OpenId configuration: ' . $e->getMessage());
+        }
+
+        // Save cache
+        if ($useCache) {
+            Cache::put(self::KEYCLOAK_OPENID_CACHE_KEY, $configuration);
         }
 
         return $configuration;

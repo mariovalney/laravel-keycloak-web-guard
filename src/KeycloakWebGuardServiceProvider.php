@@ -2,7 +2,7 @@
 
 namespace Vizir\KeycloakWebGuard;
 
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 use Vizir\KeycloakWebGuard\Auth\Guard\KeycloakWebGuard;
 

@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Route;
 use Vizir\KeycloakWebGuard\Auth\Guard\KeycloakWebGuard;
 
 class KeycloakService
@@ -85,7 +86,7 @@ class KeycloakService
             'state' => csrf_token(),
         ];
 
-        return $this->buildUrl($url, $params) . '#login';
+        return $this->buildUrl($url, $params);
     }
 
     /**
@@ -95,7 +96,30 @@ class KeycloakService
      */
     public function getLogoutUrl()
     {
-        return $this->buildUrl($this->openid['end_session_endpoint'], ['redirect_uri' => route('index')]);
+        $url = $this->openid['end_session_endpoint'];
+
+        if (! Route::has('index')) {
+            return $url;
+        }
+
+        return $this->buildUrl($url, ['redirect_uri' => route('index')]);
+    }
+
+    /**
+     * Return the logout URL
+     *
+     * @return string
+     */
+    public function getRegisterUrl()
+    {
+        $url = $this->openid['authorization_endpoint'];
+        $url = preg_replace('/\/auth$/', '/registrations', $url);
+
+        if (! Route::has('index')) {
+            return $url;
+        }
+
+        return $this->buildUrl($url, ['redirect_uri' => route('index')]);
     }
 
     /**

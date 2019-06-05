@@ -12,8 +12,6 @@ use Illuminate\Contracts\Auth\UserProvider;
 
 class KeycloakWebGuard implements Guard
 {
-    const KEYCLOAK_SESSION = '_keycloak_token';
-
     /**
      * @var null|Authenticatable|KeycloakUser
      */
@@ -101,8 +99,7 @@ class KeycloakWebGuard implements Guard
          * Store the section
          */
         $credentials['refresh_token'] = $credentials['refresh_token'] ?? '';
-        $this->request->session()->put(self::KEYCLOAK_SESSION, $credentials);
-        $this->request->session()->save();
+        KeycloakWeb::saveToken($credentials);
 
         return $this->authenticate();
     }
@@ -116,7 +113,7 @@ class KeycloakWebGuard implements Guard
     public function authenticate()
     {
         // Get Credentials
-        $credentials = $this->request->session()->get(self::KEYCLOAK_SESSION);
+        $credentials = KeycloakWeb::retrieveToken();
 
         if (empty($credentials)) {
             return false;
@@ -125,9 +122,7 @@ class KeycloakWebGuard implements Guard
         $user = KeycloakWeb::getUserProfile($credentials);
 
         if (empty($user)) {
-            $this->request->session()->forget(self::KEYCLOAK_SESSION);
-            $this->request->session()->save();
-
+            KeycloakWeb::forgetToken();
             throw new KeycloakCallbackException('User cannot be authenticated.');
         }
 

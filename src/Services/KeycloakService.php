@@ -14,6 +14,11 @@ use Vizir\KeycloakWebGuard\Auth\Guard\KeycloakWebGuard;
 class KeycloakService
 {
     /**
+     * The Session key for token
+     */
+    const KEYCLOAK_SESSION = '_keycloak_token';
+
+    /**
      * The Cache Key for OpenId Configuration
      */
     const KEYCLOAK_OPENID_CACHE_KEY = 'keycloak_web_guard_openid';
@@ -159,13 +164,56 @@ class KeycloakService
     }
 
     /**
+     * Refresh access token
+     *
+     * @param  string $refreshToken
+     * @return array
+     */
+    public function refreshAccessToken($credentials)
+    {
+        if (empty($credentials['refresh_token'])) {
+            return [];
+        }
+
+        $url = $this->openid['token_endpoint'];
+        $params = [
+            'client_id' => $this->clientId,
+            'grant_type' => 'refresh_token',
+            'refresh_token' => $credentials['refresh_token'],
+            'redirect_uri' => route('keycloak.callback'),
+        ];
+
+        if (! empty($this->clientSecret)) {
+            $params['client_secret'] = $this->clientSecret;
+        }
+
+        $token = [];
+
+        try {
+            $response = $this->httpClient->request('POST', $url, ['form_params' => $params]);
+
+            if ($response->getStatusCode() === 200) {
+                $token = $response->getBody()->getContents();
+                $token = json_decode($token, true);
+            }
+        } catch (GuzzleException $e) {
+            $this->logException($e);
+        }
+
+        return $token;
+    }
+
+    /**
      * Get access token from Code
      * @param  array $credentials
      * @return array
      */
     public function getUserProfile($credentials)
     {
+        $credentials = $this->refreshTokenIfNeeded($credentials);
+
         if (! is_array($credentials) || empty($credentials['access_token']) || empty($credentials['id_token'])) {
+            $this->forgetToken();
             return [];
         }
 
@@ -179,6 +227,7 @@ class KeycloakService
 
         try {
             $response = $this->httpClient->request('GET', $url, ['headers' => $headers]);
+
 
             if ($response->getStatusCode() === 200) {
                 $user = $response->getBody()->getContents();
@@ -194,13 +243,53 @@ class KeycloakService
     }
 
     /**
+     * Get Access Token data
+     *
+     * @param string $token
+     * @return array
+     */
+    public function parseAccessToken($token)
+    {
+        if (! is_string($token)) {
+            return [];
+        }
+
+        $token = explode('.', $token);
+        $token = base64_decode($token[1]);
+
+        return json_decode($token, true);
+    }
+
+    /**
+     * Retrieve Token from Session
+     *
+     * @return void
+     */
+    public function retrieveToken()
+    {
+        return session()->get(self::KEYCLOAK_SESSION);
+    }
+
+    /**
+     * Save Token to Session
+     *
+     * @return void
+     */
+    public function saveToken($credentials)
+    {
+        session()->put(self::KEYCLOAK_SESSION, $credentials);
+        session()->save();
+    }
+
+    /**
      * Remove Token from Session
      *
      * @return void
      */
     public function forgetToken()
     {
-        session()->forget(KeycloakWebGuard::KEYCLOAK_SESSION);
+        session()->forget(self::KEYCLOAK_SESSION);
+        session()->save();
     }
 
     /**
@@ -258,6 +347,36 @@ class KeycloakService
         }
 
         return $configuration;
+    }
+
+    /**
+     * Check we need to refresh token and refresh if needed
+     *
+     * @param  array $credentials
+     * @return array
+     */
+    private function refreshTokenIfNeeded($credentials)
+    {
+        if (! is_array($credentials) || empty($credentials['access_token']) || empty($credentials['refresh_token'])) {
+            return $credentials;
+        }
+
+        $info = $this->parseAccessToken($credentials['access_token']);
+        $exp = $info['exp'] ?? 0;
+
+        if (time() < $exp) {
+            return $credentials;
+        }
+
+        $credentials = $this->refreshAccessToken($credentials);
+
+        if (empty($credentials['access_token'])) {
+            $this->forgetToken();
+            return [];
+        }
+
+        $this->saveToken($credentials);
+        return $credentials;
     }
 
     /**

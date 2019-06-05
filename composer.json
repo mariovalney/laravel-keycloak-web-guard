@@ -1,0 +1,26 @@
+{
+    "name": "vizir/laravel-keycloak-web-guard",
+    "description": "Simple Keycloak Guard to Laravel Web Routes",
+    "authors": [
+        {
+            "name": "Mário Valney",
+            "email": "mariovalney@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "guzzlehttp/guzzle": "^6.3@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Vizir\\KeycloakWebGuard\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Vizir\\KeycloakWebGuard\\KeycloakWebGuardServiceProvider"
+            ]
+        }
+    }
+}

@@ -45,6 +45,13 @@ return [
     'cache_openid' => env('KEYCLOAK_CACHE_OPENID', false),
 
     /**
+     * The User Model
+     * By default, we support a User without any database on the fly, but you
+     * can add your model here so we will provide it
+     */
+    'user_model' => 'Vizir\\KeycloakWebGuard\\Models\\KeycloakUser',
+
+    /**
      * The routes for authenticate
      *
      * Accept a string as the first parameter of route() or false to disable the route.

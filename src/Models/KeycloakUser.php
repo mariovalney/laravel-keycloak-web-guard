@@ -49,17 +49,6 @@ class KeycloakUser implements Authenticatable
     }
 
     /**
-     * Get User Gravatar
-     *
-     * @return string
-     */
-    public function getAvatar()
-    {
-        $hash = md5($this->email);
-        return 'https://www.gravatar.com/avatar/' . $hash;
-    }
-
-    /**
      * Get the name of the unique identifier for the user.
      *
      * @return string

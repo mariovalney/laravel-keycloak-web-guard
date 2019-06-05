@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Vizir\KeycloakWebGuard\Exceptions\KeycloakCallbackException;
 use Vizir\KeycloakWebGuard\Models\KeycloakUser;
 use Vizir\KeycloakWebGuard\Facades\KeycloakWeb;
+use Illuminate\Contracts\Auth\UserProvider;
 
 class KeycloakWebGuard implements Guard
 {
@@ -23,8 +24,9 @@ class KeycloakWebGuard implements Guard
      *
      * @param Request $request
      */
-    public function __construct(Request $request)
+    public function __construct(UserProvider $provider, Request $request)
     {
+        $this->provider = $provider;
         $this->request = $request;
     }
 
@@ -129,7 +131,8 @@ class KeycloakWebGuard implements Guard
             throw new KeycloakCallbackException('User cannot be authenticated.');
         }
 
-        $user = new KeycloakUser($user);
+        // Provide User
+        $user = $this->provider->retrieveByCredentials($user);
         $this->setUser($user);
 
         return true;

@@ -7,8 +7,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 use Vizir\KeycloakWebGuard\Auth\Guard\KeycloakWebGuard;
-use Vizir\KeycloakWebGuard\Services\KeycloakService;
+use Vizir\KeycloakWebGuard\Auth\KeycloakWebUserProvider;
 use Vizir\KeycloakWebGuard\Middleware\KeycloakAuthenticated;
+use Vizir\KeycloakWebGuard\Models\KeycloakUser;
+use Vizir\KeycloakWebGuard\Services\KeycloakService;
 
 class KeycloakWebGuardServiceProvider extends ServiceProvider
 {
@@ -35,7 +37,13 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
     {
         // Keycloak Web Guard
         Auth::extend('keycloak-web', function ($app, $name, array $config) {
-            return new KeycloakWebGuard($app->request);
+            $model = Config::get('keycloak-web.user_model');
+            if ($model === KeycloakUser::class || is_subclass_of($model, KeycloakUser::class)) {
+                return new KeycloakWebGuard(new KeycloakWebUserProvider($model), $app->request);
+            }
+
+            $provider = Auth::createUserProvider($config['provider']);
+            return new KeycloakWebGuard($provider, $app->request);
         });
 
         // Facades

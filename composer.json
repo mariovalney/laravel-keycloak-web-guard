@@ -1,6 +1,14 @@
 {
     "name": "vizir/laravel-keycloak-web-guard",
     "description": "Simple Keycloak Guard to Laravel Web Routes",
+    "homepage": "https://github.com/Vizir/laravel-keycloak-web-guard",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "keycloak",
+        "jwt",
+        "authentication"
+    ],
     "authors": [
         {
             "name": "Mário Valney",

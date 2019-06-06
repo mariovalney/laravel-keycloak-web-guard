@@ -49,6 +49,16 @@ class KeycloakUser implements Authenticatable
     }
 
     /**
+     * Get the value of the model's primary key.
+     *
+     * @return mixed
+     */
+    public function getKey()
+    {
+        return $this->email;
+    }
+
+    /**
      * Get the name of the unique identifier for the user.
      *
      * @return string

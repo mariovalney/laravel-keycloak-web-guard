@@ -30,7 +30,7 @@ Require the package
 composer require vizir/laravel-keycloak-web-guard
 ```
 
-If you want to change user model or the routes, publish the config file (other configuration is done by `.env` file).
+If you want to change routes or the default values for Keycloak, publish the config file:
 
 ```
 php artisan vendor:publish  --provider="Vizir\KeycloakWebGuard\KeycloakWebGuardServiceProvider"
@@ -39,7 +39,20 @@ php artisan vendor:publish  --provider="Vizir\KeycloakWebGuard\KeycloakWebGuardS
 
 ## Configuration
 
-Add to your `.env` file the follow values:
+After publishing `config/keycloak-web.php` file, you can change the routes:
+
+```php
+'routes' => [
+    'login' => 'login',
+    'logout' => 'logout',
+    'register' => 'register',
+    'callback' => 'callback',
+]
+```
+
+Change any value to change the URL.
+
+Other configurations can be changed to have a new default value, but we recommend to use `.env` file:
 
 *  `KEYCLOAK_BASE_URL`
 
@@ -73,6 +86,40 @@ We can cache the OpenId Configuration: it's a list of endpoints we require to Ke
 
 If you activate it, *remember to flush the cache* when change the realm or url.
 
+## Laravel Auth
+
+You should add Keycloak Web guard to your `config/auth.php`.
+
+Just add **keycloak-web** to "driver" option on configurations you want.
+
+As my default is web, I add to it:
+
+```php
+'guards' => [
+    'web' => [
+        'driver' => 'keycloak-web',
+        'provider' => 'users',
+    ],
+
+    // ...
+],
+```
+
+And change your provider config too:
+
+```php
+'providers' => [
+    'users' => [
+        'driver' => 'keycloak-users',
+        'model' => Vizir\KeycloakWebGuard\Models\KeycloakUser::class,
+    ],
+
+    // ...
+]
+```
+
+**Note:** if you want use another User Model, check the FAQ *How to implement my Model?*.
+
 ## API
 
 We implement the `Illuminate\Contracts\Auth\Guard`. So, all Laravel default methods will be available.
@@ -83,12 +130,13 @@ Ex: `Auth::user()` returns the authenticated user.
 
 ### How to implement my Model?
 
-You should extend `Vizir\KeycloakWebGuard\Models\KeycloakUser` and change the `user_model` configuration.
-We'll ignore the `provider` config on `auth.php`.
+We registered a new user provider that you configured on `config/auth.php` called "keycloak-users". 
 
-If you set a model it not a child of `KeycloakUser` the application will provide a user.
-Maybe a eloquent/database provider will work seamless, but we do not tested this case. 
-If not, you should create a [UserProvider](https://laravel.com/docs/5.8/authentication#adding-custom-user-providers) to do the job: we use the `retrieveByCredentials` method passing the Keycloak Profile information to retrieve a instance of model.
+In this same configuration you setted the model. So you can register your own model extending `Vizir\KeycloakWebGuard\Models\KeycloakUser` class and changing this configuration.
+
+You can implement your own [User Provider](https://laravel.com/docs/5.8/authentication#adding-custom-user-providers): just remember to implement the `retrieveByCredentials` method receiving the Keycloak Profile information to retrieve a instance of model.
+
+Eloquent/Database User Provider should work well as they will parse the Keycloak Profile and make a "where" to your database. So your user data must match with Keycloak Profile.
 
 ### I cannot find my login form.
 
@@ -101,8 +149,6 @@ There's no login/registration form.
 Just add the `keycloak-web` middleware:
 
 ```php
-<?php 
-
 // On RouteServiceProvider.php for example
 
 Route::prefix('admin')

@@ -46,7 +46,7 @@ class KeycloakWebUserProvider implements UserProvider
      */
     public function retrieveById($identifier)
     {
-        throw new \BadMethodCallException('Unexpected method call');
+        throw new \BadMethodCallException('Unexpected method [retrieveById] call');
     }
 
     /**
@@ -58,7 +58,7 @@ class KeycloakWebUserProvider implements UserProvider
      */
     public function retrieveByToken($identifier, $token)
     {
-        throw new \BadMethodCallException('Unexpected method call');
+        throw new \BadMethodCallException('Unexpected method [retrieveByToken] call');
     }
 
     /**
@@ -70,7 +70,7 @@ class KeycloakWebUserProvider implements UserProvider
      */
     public function updateRememberToken(Authenticatable $user, $token)
     {
-        throw new \BadMethodCallException('Unexpected method call');
+        throw new \BadMethodCallException('Unexpected method [updateRememberToken] call');
     }
 
     /**
@@ -82,6 +82,6 @@ class KeycloakWebUserProvider implements UserProvider
      */
     public function validateCredentials(Authenticatable $user, array $credentials)
     {
-        throw new \BadMethodCallException('Unexpected method call');
+        throw new \BadMethodCallException('Unexpected method [validateCredentials] call');
     }
 }

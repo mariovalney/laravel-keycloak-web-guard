@@ -26,6 +26,11 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
 
         $this->publishes([$config => config_path('keycloak-web.php')], 'config');
         $this->mergeConfigFrom($config, 'keycloak-web');
+
+        // User Provider
+        Auth::provider('keycloak-users', function($app, array $config) {
+            return new KeycloakWebUserProvider($config['model']);
+        });
     }
 
     /**
@@ -37,11 +42,6 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
     {
         // Keycloak Web Guard
         Auth::extend('keycloak-web', function ($app, $name, array $config) {
-            $model = Config::get('keycloak-web.user_model');
-            if ($model === KeycloakUser::class || is_subclass_of($model, KeycloakUser::class)) {
-                return new KeycloakWebGuard(new KeycloakWebUserProvider($model), $app->request);
-            }
-
             $provider = Auth::createUserProvider($config['provider']);
             return new KeycloakWebGuard($provider, $app->request);
         });

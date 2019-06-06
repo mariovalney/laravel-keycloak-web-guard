@@ -76,7 +76,7 @@ class KeycloakUser implements Authenticatable
      */
     public function getAuthPassword()
     {
-        throw new \BadMethodCallException('Unexpected method call');
+        throw new \BadMethodCallException('Unexpected method [getAuthPassword] call');
     }
 
     /**
@@ -87,7 +87,7 @@ class KeycloakUser implements Authenticatable
      */
     public function getRememberToken()
     {
-        throw new \BadMethodCallException('Unexpected method call');
+        throw new \BadMethodCallException('Unexpected method [getRememberToken] call');
     }
 
     /**
@@ -98,7 +98,7 @@ class KeycloakUser implements Authenticatable
      */
     public function setRememberToken($value)
     {
-        throw new \BadMethodCallException('Unexpected method call');
+        throw new \BadMethodCallException('Unexpected method [setRememberToken] call');
     }
 
     /**
@@ -109,6 +109,6 @@ class KeycloakUser implements Authenticatable
      */
     public function getRememberTokenName()
     {
-        throw new \BadMethodCallException('Unexpected method call');
+        throw new \BadMethodCallException('Unexpected method [getRememberTokenName] call');
     }
 }

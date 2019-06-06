@@ -35,6 +35,8 @@ class KeycloakUser implements Authenticatable
                 $this->attributes[ $key ] = $value;
             }
         }
+
+        $this->id = $this->getKey();
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Vizir\KeycloakWebGuard\Auth\Guard;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Vizir\KeycloakWebGuard\Exceptions\KeycloakCallbackException;
 use Vizir\KeycloakWebGuard\Models\KeycloakUser;
 use Vizir\KeycloakWebGuard\Facades\KeycloakWeb;
@@ -123,7 +124,12 @@ class KeycloakWebGuard implements Guard
 
         if (empty($user)) {
             KeycloakWeb::forgetToken();
-            throw new KeycloakCallbackException('User cannot be authenticated.');
+
+            if (Config::get('app.debug', false)) {
+                throw new KeycloakCallbackException('User cannot be authenticated.');
+            }
+
+            return false;
         }
 
         // Provide User

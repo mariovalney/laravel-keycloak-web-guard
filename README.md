@@ -126,6 +126,29 @@ We implement the `Illuminate\Contracts\Auth\Guard`. So, all Laravel default meth
 
 Ex: `Auth::user()` returns the authenticated user.
 
+## Roles
+
+You can check user has a role simply by `Auth::hasRole('role')`;
+
+This method accept two parameters: the first is the role (string or array of strings) and the second is the resource.
+
+If not provided, resource will be the client_id, which is the regular check if you authenticating into this client to your front.
+
+### Keycloak Can Middleware
+
+You can check user against one or more roles using the `keycloak-web-can` Middleware.
+
+Add this to your Controller's `__construct` method:
+
+```php
+$this->middleware('keycloak-web-can:manage-something-cool');
+
+// For multiple roles, separate with '|'
+$this->middleware('keycloak-web-can:manage-something-cool|manage-something-nice|manage-my-application');
+```
+
+This middleware works searching for all roles on default resource (client_id). You can extend it and register your own middleware on Kernel.php or just use `Auth::hasRole($roles, $resource)` on your Controller.
+
 ## FAQ
 
 ### How to implement my Model?

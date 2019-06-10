@@ -2,7 +2,6 @@
 
 namespace Vizir\KeycloakWebGuard\Middleware;
 
-use Closure;
 use Illuminate\Auth\Middleware\Authenticate;
 
 class KeycloakAuthenticated extends Authenticate

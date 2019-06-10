@@ -9,6 +9,7 @@ use Illuminate\Support\ServiceProvider;
 use Vizir\KeycloakWebGuard\Auth\Guard\KeycloakWebGuard;
 use Vizir\KeycloakWebGuard\Auth\KeycloakWebUserProvider;
 use Vizir\KeycloakWebGuard\Middleware\KeycloakAuthenticated;
+use Vizir\KeycloakWebGuard\Middleware\KeycloakCan;
 use Vizir\KeycloakWebGuard\Models\KeycloakUser;
 use Vizir\KeycloakWebGuard\Services\KeycloakService;
 
@@ -59,6 +60,8 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
             StartSession::class,
             KeycloakAuthenticated::class,
         ]);
+
+        $this->app['router']->aliasMiddleware('keycloak-web-can', KeycloakCan::class);
     }
 
     /**

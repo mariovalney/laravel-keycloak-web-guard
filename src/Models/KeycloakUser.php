@@ -2,6 +2,7 @@
 
 namespace Vizir\KeycloakWebGuard\Models;
 
+use Auth;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class KeycloakUser implements Authenticatable
@@ -78,6 +79,20 @@ class KeycloakUser implements Authenticatable
     public function getAuthIdentifier()
     {
         return $this->email;
+    }
+
+    /**
+     * Check user has roles
+     *
+     * @see KeycloakWebGuard::hasRole()
+     *
+     * @param  string|array  $roles
+     * @param  string  $resource
+     * @return boolean
+     */
+    public function hasRole($roles, $resource = '')
+    {
+        return Auth::hasRole($roles, $resource);
     }
 
     /**

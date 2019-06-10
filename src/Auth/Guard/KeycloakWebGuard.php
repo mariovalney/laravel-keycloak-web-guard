@@ -138,4 +138,36 @@ class KeycloakWebGuard implements Guard
 
         return true;
     }
+
+    /**
+     * Check user is authenticated and has a role
+     *
+     * @param array|string $roles
+     * @param string $resource Default is empty: point to client_id
+     *
+     * @return boolean
+     */
+    public function hasRole($roles, $resource = '')
+    {
+        if (empty($resource)) {
+            $resource = Config::get('keycloak-web.client_id');
+        }
+
+        if (! $this->check()) {
+            return false;
+        }
+
+        $token = KeycloakWeb::retrieveToken();
+
+        if (empty($token) || empty($token['access_token'])) {
+            return false;
+        }
+
+        $token = KeycloakWeb::parseAccessToken($token['access_token']);
+        $resourceRoles = $token['resource_access'] ?? [];
+        $resourceRoles = $resourceRoles[ $resource ] ?? [];
+        $resourceRoles = $resourceRoles['roles'] ?? [];
+
+        return empty(array_diff((array) $roles, $resourceRoles));
+    }
 }

@@ -61,6 +61,13 @@ class KeycloakService
     protected $cacheOpenid;
 
     /**
+     * CallbackUrl
+     *
+     * @var array
+     */
+    protected $callbackUrl;
+
+    /**
      * The Constructor
      * You can extend this service setting protected variables before call
      * parent constructor to comunicate with Keycloak smoothly.

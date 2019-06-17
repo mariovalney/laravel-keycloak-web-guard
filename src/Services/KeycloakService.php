@@ -90,6 +90,10 @@ class KeycloakService
             $this->cacheOpenid = Config::get('keycloak-web.cache_openid', false);
         }
 
+        if (is_null($this->callbackUrl)) {
+            $this->callbackUrl = route('keycloak.callback');
+        }
+
         $this->httpClient = $client;
         $this->openid = $this->getOpenIdConfiguration();
     }
@@ -108,7 +112,7 @@ class KeycloakService
             'scope' => 'openid',
             'client_id' => $this->clientId,
             'response_type' => 'code',
-            'redirect_uri' => route('keycloak.callback'),
+            'redirect_uri' => $this->callbackUrl,
             'state' => csrf_token(),
         ];
 
@@ -161,7 +165,7 @@ class KeycloakService
             'code' => $code,
             'client_id' => $this->clientId,
             'grant_type' => 'authorization_code',
-            'redirect_uri' => route('keycloak.callback'),
+            'redirect_uri' => $this->callbackUrl,
         ];
 
         if (! empty($this->clientSecret)) {
@@ -201,7 +205,7 @@ class KeycloakService
             'client_id' => $this->clientId,
             'grant_type' => 'refresh_token',
             'refresh_token' => $credentials['refresh_token'],
-            'redirect_uri' => route('keycloak.callback'),
+            'redirect_uri' => $this->callbackUrl,
         ];
 
         if (! empty($this->clientSecret)) {
@@ -248,7 +252,6 @@ class KeycloakService
 
         try {
             $response = $this->httpClient->request('GET', $url, ['headers' => $headers]);
-
 
             if ($response->getStatusCode() === 200) {
                 $user = $response->getBody()->getContents();

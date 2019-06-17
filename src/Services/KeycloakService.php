@@ -23,56 +23,74 @@ class KeycloakService
      *
      * @var string
      */
-    private $baseUrl;
+    protected $baseUrl;
 
     /**
      * Keycloak Realm
      *
      * @var string
      */
-    private $realm;
+    protected $realm;
 
     /**
      * Keycloak Client ID
      *
      * @var string
      */
-    private $clientId;
+    protected $clientId;
 
     /**
      * Keycloak Client Secret
      *
      * @var string
      */
-    private $clientSecret;
+    protected $clientSecret;
 
     /**
      * Keycloak OpenId Configuration
      *
      * @var array
      */
-    private $openid;
+    protected $openid;
 
     /**
      * Keycloak OpenId Cache Configuration
      *
      * @var array
      */
-    private $cacheOpenid;
+    protected $cacheOpenid;
 
     /**
-     * Singleton Constructor
+     * The Constructor
+     * You can extend this service setting protected variables before call
+     * parent constructor to comunicate with Keycloak smoothly.
+     *
+     * @param ClientInterface $client
+     * @return void
      */
     public function __construct(ClientInterface $client)
     {
+        if (is_null($this->baseUrl)) {
+            $this->baseUrl = trim(Config::get('keycloak-web.base_url'), '/');
+        }
+
+        if (is_null($this->realm)) {
+            $this->realm = Config::get('keycloak-web.realm');
+        }
+
+        if (is_null($this->clientId)) {
+            $this->clientId = Config::get('keycloak-web.client_id');
+        }
+
+        if (is_null($this->clientSecret)) {
+            $this->clientSecret = Config::get('keycloak-web.client_secret');
+        }
+
+        if (is_null($this->cacheOpenid)) {
+            $this->cacheOpenid = Config::get('keycloak-web.cache_openid', false);
+        }
+
         $this->httpClient = $client;
-
-        $this->baseUrl = trim(Config::get('keycloak-web.base_url'), '/');
-        $this->realm = Config::get('keycloak-web.realm');
-        $this->clientId = Config::get('keycloak-web.client_id');
-        $this->clientSecret = Config::get('keycloak-web.client_secret');
-        $this->cacheOpenid = Config::get('keycloak-web.cache_openid', false);
-
         $this->openid = $this->getOpenIdConfiguration();
     }
 

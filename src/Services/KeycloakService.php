@@ -240,7 +240,7 @@ class KeycloakService
 
         $url = $this->openid['userinfo_endpoint'];
         $headers = [
-            'Authorization' => 'bearer ' . $credentials['access_token'],
+            'Authorization' => 'Bearer ' . $credentials['access_token'],
             'Accept' => 'application/json',
         ];
 
@@ -320,7 +320,7 @@ class KeycloakService
      * @param  array $params
      * @return string
      */
-    private function buildUrl($url, $params)
+    protected function buildUrl($url, $params)
     {
         return trim($url, '?') . '?' . Arr::query($params);
     }
@@ -330,7 +330,7 @@ class KeycloakService
      *
      * @return array
      */
-    private function getOpenIdConfiguration()
+    protected function getOpenIdConfiguration()
     {
         $cacheKey = 'keycloak_web_guard_openid-' . $this->realm . '-' . $this->clientId;
 
@@ -376,7 +376,7 @@ class KeycloakService
      * @param  array $credentials
      * @return array
      */
-    private function refreshTokenIfNeeded($credentials)
+    protected function refreshTokenIfNeeded($credentials)
     {
         if (! is_array($credentials) || empty($credentials['access_token']) || empty($credentials['refresh_token'])) {
             return $credentials;
@@ -410,7 +410,7 @@ class KeycloakService
      * @param  string $userSub
      * @return void
      */
-    private function validateProfileSub($idToken, $userSub)
+    protected function validateProfileSub($idToken, $userSub)
     {
         $sub = explode('.', $idToken);
         $sub = $sub[1] ?? '';
@@ -428,7 +428,7 @@ class KeycloakService
      * @param  GuzzleException $e
      * @return void
      */
-    private function logException(GuzzleException $e)
+    protected function logException(GuzzleException $e)
     {
         if (empty($e->getResponse())) {
             Log::error('[Keycloak Service] ' . $e->getMessage());

@@ -19,11 +19,6 @@ class KeycloakService
     const KEYCLOAK_SESSION = '_keycloak_token';
 
     /**
-     * The Cache Key for OpenId Configuration
-     */
-    const KEYCLOAK_OPENID_CACHE_KEY = 'keycloak_web_guard_openid';
-
-    /**
      * Keycloak URL
      *
      * @var string
@@ -59,6 +54,13 @@ class KeycloakService
     private $openid;
 
     /**
+     * Keycloak OpenId Cache Configuration
+     *
+     * @var array
+     */
+    private $cacheOpenid;
+
+    /**
      * Singleton Constructor
      */
     public function __construct(ClientInterface $client)
@@ -69,6 +71,7 @@ class KeycloakService
         $this->realm = Config::get('keycloak-web.realm');
         $this->clientId = Config::get('keycloak-web.client_id');
         $this->clientSecret = Config::get('keycloak-web.client_secret');
+        $this->cacheOpenid = Config::get('keycloak-web.cache_openid', false);
 
         $this->openid = $this->getOpenIdConfiguration();
     }
@@ -311,11 +314,11 @@ class KeycloakService
      */
     private function getOpenIdConfiguration()
     {
-        $useCache = Config::get('keycloak-web.cache_openid', false);
+        $cacheKey = 'keycloak_web_guard_openid-' . $this->realm . '-' . $this->clientId;
 
         // From cache?
-        if ($useCache) {
-            $configuration = Cache::get(self::KEYCLOAK_OPENID_CACHE_KEY, []);
+        if ($this->cacheOpenid) {
+            $configuration = Cache::get($cacheKey, []);
 
             if (! empty($configuration)) {
                 return $configuration;
@@ -342,8 +345,8 @@ class KeycloakService
         }
 
         // Save cache
-        if ($useCache) {
-            Cache::put(self::KEYCLOAK_OPENID_CACHE_KEY, $configuration);
+        if ($this->cacheOpenid) {
+            Cache::put($cacheKey, $configuration);
         }
 
         return $configuration;

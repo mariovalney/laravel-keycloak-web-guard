@@ -68,6 +68,13 @@ class KeycloakService
     protected $callbackUrl;
 
     /**
+     * RedirectLogout
+     *
+     * @var array
+     */
+    protected $redirectLogout;
+
+    /**
      * The Constructor
      * You can extend this service setting protected variables before call
      * parent constructor to comunicate with Keycloak smoothly.
@@ -101,6 +108,10 @@ class KeycloakService
             $this->callbackUrl = route('keycloak.callback');
         }
 
+        if (is_null($this->redirectLogout)) {
+            $this->redirectLogout = Config::get('keycloak-web.redirect_logout');
+        }
+
         $this->httpClient = $client;
         $this->openid = $this->getOpenIdConfiguration();
     }
@@ -120,7 +131,6 @@ class KeycloakService
             'client_id' => $this->clientId,
             'response_type' => 'code',
             'redirect_uri' => $this->callbackUrl,
-            'state' => csrf_token(),
         ];
 
         return $this->buildUrl($url, $params);
@@ -135,11 +145,11 @@ class KeycloakService
     {
         $url = $this->openid['end_session_endpoint'];
 
-        if (! Route::has('index')) {
-            return $url;
+        if (empty($this->redirectLogout)) {
+            $this->redirectLogout = url('/');
         }
 
-        return $this->buildUrl($url, ['redirect_uri' => route('index')]);
+        return $this->buildUrl($url, ['redirect_uri' => $this->redirectLogout]);
     }
 
     /**

@@ -364,7 +364,9 @@ class KeycloakService
                 }
 
                 $key = array_shift($value);
-                $query[$key] = implode('=', $value);
+                $value = implode('=', $value);
+
+                $query[$key] = urldecode($value);
             }
         }
 

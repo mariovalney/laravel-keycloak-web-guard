@@ -340,14 +340,18 @@ class KeycloakService
      * @param  array $params
      * @return string
      */
-    protected function buildUrl($url, $params)
+    public function buildUrl($url, $params)
     {
         $parsedUrl = parse_url($url);
         if (empty($parsedUrl['host'])) {
             return trim($url, '?') . '?' . Arr::query($params);
         }
 
-        $parsedUrl['scheme'] = (empty($parsedUrl['scheme'])) ? 'https://' : $parsedUrl['scheme'];
+        if (! empty($parsedUrl['port'])) {
+            $parsedUrl['host'] .= ':' . $parsedUrl['port'];
+        }
+
+        $parsedUrl['scheme'] = (empty($parsedUrl['scheme'])) ? 'https' : $parsedUrl['scheme'];
         $parsedUrl['path'] = (empty($parsedUrl['path'])) ? '' : $parsedUrl['path'];
 
         $url = $parsedUrl['scheme'] . '://' . $parsedUrl['host'] . $parsedUrl['path'];

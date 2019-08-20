@@ -342,7 +342,35 @@ class KeycloakService
      */
     protected function buildUrl($url, $params)
     {
-        return trim($url, '?') . '?' . Arr::query($params);
+        $parsedUrl = parse_url($url);
+        if (empty($parsedUrl['host'])) {
+            return trim($url, '?') . '?' . Arr::query($params);
+        }
+
+        $parsedUrl['scheme'] = (empty($parsedUrl['scheme'])) ? 'https://' : $parsedUrl['scheme'];
+        $parsedUrl['path'] = (empty($parsedUrl['path'])) ? '' : $parsedUrl['path'];
+
+        $url = $parsedUrl['scheme'] . '://' . $parsedUrl['host'] . $parsedUrl['path'];
+        $query = [];
+
+        if (! empty($parsedUrl['query'])) {
+            $parsedUrl['query'] = explode('&', $parsedUrl['query']);
+
+            foreach ($parsedUrl['query'] as $value) {
+                $value = explode('=', $value);
+
+                if (count($value) < 2) {
+                    continue;
+                }
+
+                $key = array_shift($value);
+                $query[$key] = implode('=', $value);
+            }
+        }
+
+        $query = array_merge($query, $params);
+
+        return $url . '?' . Arr::query($query);
     }
 
     /**

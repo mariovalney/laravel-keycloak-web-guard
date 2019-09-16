@@ -296,7 +296,7 @@ class KeycloakService
         }
 
         $token = explode('.', $token);
-        $token = base64_decode($token[1]);
+        $token = $this->base64UrlDecode($token[1]);
 
         return json_decode($token, true);
     }
@@ -468,7 +468,7 @@ class KeycloakService
     {
         $sub = explode('.', $idToken);
         $sub = $sub[1] ?? '';
-        $sub = json_decode(base64_decode($sub), true);
+        $sub = json_decode($this->base64UrlDecode($sub), true);
         $sub = $sub['sub'] ?? '';
 
         if ($sub !== $userSub) {
@@ -495,5 +495,18 @@ class KeycloakService
         ];
 
         Log::error('[Keycloak Service] ' . print_r($error, true));
+    }
+
+    /**
+     * Base64UrlDecode string
+     *
+     * @link https://www.php.net/manual/pt_BR/function.base64-encode.php#103849
+     *
+     * @param  string $data
+     * @return string
+     */
+    protected function base64UrlDecode($data)
+    {
+        return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
     }
 }

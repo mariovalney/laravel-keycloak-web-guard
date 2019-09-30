@@ -153,22 +153,17 @@ class KeycloakService
     }
 
     /**
-     * Return the logout URL
+     * Return the register URL
+     *
+     * @link https://stackoverflow.com/questions/51514437/keycloak-direct-user-link-registration
      *
      * @return string
      */
     public function getRegisterUrl()
     {
-        $url = $this->openid['authorization_endpoint'];
-        $url = preg_replace('/\/auth$/', '/registrations', $url);
-
-        if (! Route::has('index')) {
-            return $url;
-        }
-
-        return $this->buildUrl($url, ['redirect_uri' => route('index')]);
+        $url = $this->getLoginUrl();
+        return str_replace('/auth?', '/registrations?', $url);
     }
-
     /**
      * Get access token from Code
      *

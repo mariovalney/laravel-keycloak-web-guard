@@ -45,6 +45,13 @@ return [
     'cache_openid' => env('KEYCLOAK_CACHE_OPENID', false),
 
     /**
+     * Page to redirect after callback if there's no "intent"
+     *
+     * @see Vizir\KeycloakWebGuard\Controllers\AuthController::callback()
+     */
+    'redirect_url' => '/admin',
+
+    /**
      * The routes for authenticate
      *
      * Accept a string as the first parameter of route() or false to disable the route.

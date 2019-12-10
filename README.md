@@ -21,6 +21,7 @@ It works on front. For APIs we recommend [laravel-keycloak-guard](https://github
 1. He's redirected to callback page and we change the code for a access token.
 1. We store it on session and validate user.
 1. User is logged.
+1. We redirect the user to "redirect_url" route (see config) or the intended one.
 
 ## Install
 
@@ -42,6 +43,8 @@ php artisan vendor:publish  --provider="Vizir\KeycloakWebGuard\KeycloakWebGuardS
 After publishing `config/keycloak-web.php` file, you can change the routes:
 
 ```php
+'redirect_url' => '/admin',
+
 'routes' => [
     'login' => 'login',
     'logout' => 'logout',
@@ -153,7 +156,7 @@ This middleware works searching for all roles on default resource (client_id). Y
 
 ### How to implement my Model?
 
-We registered a new user provider that you configured on `config/auth.php` called "keycloak-users". 
+We registered a new user provider that you configured on `config/auth.php` called "keycloak-users".
 
 In this same configuration you setted the model. So you can register your own model extending `Vizir\KeycloakWebGuard\Models\KeycloakUser` class and changing this configuration.
 
@@ -178,11 +181,11 @@ Route::prefix('admin')
   ->middleware('keycloak-web')
   ->namespace($this->namespace)
   ->group(base_path('routes/web.php'));
-  
+
 // Or with Route facade in another place
 
 Route::group(['middleware' => 'keycloak-web'], function () {
-    Route::get('/protected', 'Controller@protected');
+    Route::get('/admin', 'Controller@admin');
 });
 ```
 

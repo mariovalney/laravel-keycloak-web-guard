@@ -56,9 +56,10 @@ class KeycloakWebGuard implements Guard
      */
     public function user()
     {
-        if(! $this->user) {
+        if (empty($this->user)) {
             $this->authenticate();
         }
+
         return $this->user;
     }
 

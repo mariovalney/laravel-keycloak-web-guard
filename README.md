@@ -191,7 +191,38 @@ Route::group(['middleware' => 'keycloak-web'], function () {
 
 ### Where the access token is persisted?
 
-On session. We recommend implement the database driver.
+On session. We recommend implement the database driver if you have load balance.
+
+### I'm having problems with session (stuck on login loop)
+
+For some reason Laravel can present a problem with EncryptCookies middleware changing the session ID.
+
+In this case, we will always try to login, as tokens cannot be retrieved.
+
+You can remove session_id cooki from encryption:
+
+```php
+// On your EncryptCookies middleware
+
+class EncryptCookies extends Middleware
+{
+    protected $except = [];
+
+    public function __construct(EncrypterContract $encrypter)
+    {
+        parent::__construct($encrypter);
+
+        /**
+         * This will disable in runtime.
+         *
+         * If you have a "session.cookie" option or don't care about changing the app name
+         * (in another environment, for example), you can only add it to "$except" array on top
+         */
+        $this->disableFor(config('session.cookie'));
+    }
+}
+
+```
 
 ### My client is not public.
 

@@ -241,6 +241,34 @@ class KeycloakService
     }
 
     /**
+     * Invalidate Refresh
+     *
+     * @param  string $refreshToken
+     * @return array
+     */
+    public function invalidateRefreshToken($refreshToken)
+    {
+        $url = $this->openid['end_session_endpoint'];
+        $params = [
+            'client_id' => $this->clientId,
+            'refresh_token' => $refreshToken,
+        ];
+
+        if (! empty($this->clientSecret)) {
+            $params['client_secret'] = $this->clientSecret;
+        }
+
+        try {
+            $response = $this->httpClient->request('POST', $url, ['form_params' => $params]);
+            return $response->getStatusCode() === 204;
+        } catch (GuzzleException $e) {
+            $this->logException($e);
+        }
+
+        return false;
+    }
+
+    /**
      * Get access token from Code
      * @param  array $credentials
      * @return array

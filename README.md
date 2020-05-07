@@ -228,6 +228,20 @@ class EncryptCookies extends Middleware
 
 If your client is not public, you should provide a `KEYCLOAK_CLIENT_SECRET` on your `.env`.
 
+### How can I override the default Guzzle options?
+
+In some use cases you may need to override the default Guzzle options - likely either to disable SSL verification or to set a Proxy to route all requests through.
+
+Every [http://docs.guzzlephp.org/en/stable/request-options.html](Guzzle Request Option) is supported and is passed directly to the Guzzle Client instance.
+
+Just add the options you would like as an array to the `keycloak-web.php` config file.
+
+```
+'guzzle_options' => [
+    'verify' => false
+]
+```
+
 ## Developers
 
 * Mário Valney [@mariovalney](https://twitter.com/mariovalney)

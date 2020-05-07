@@ -65,5 +65,12 @@ return [
         'logout' => 'logout',
         'register' => 'register',
         'callback' => 'callback',
-    ]
+    ],
+
+    /**
+    * GuzzleHttp Client options
+    *
+    * @link http://docs.guzzlephp.org/en/stable/request-options.html
+    */
+   'guzzle_options' => [],
 ];

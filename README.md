@@ -248,3 +248,5 @@ Just add the options you would like to `guzzle_options` array on `keycloak-web.p
 
 * Mário Valney [@mariovalney](https://twitter.com/mariovalney)
 * [Vizir Software Sutdio](https://vizir.com.br)
+
+With contributors on GitHub :heart:

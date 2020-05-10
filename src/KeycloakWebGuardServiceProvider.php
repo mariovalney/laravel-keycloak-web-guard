@@ -2,6 +2,8 @@
 
 namespace Vizir\KeycloakWebGuard;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
@@ -62,6 +64,12 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
         ]);
 
         $this->app['router']->aliasMiddleware('keycloak-web-can', KeycloakCan::class);
+
+        $this->app->when(KeycloakService::class)
+            ->needs(ClientInterface::class)
+            ->give(static function() {
+                new Client(Config::get('keycloak-web.guzzle_options', []));
+            });
     }
 
     /**

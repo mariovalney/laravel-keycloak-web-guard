@@ -2,7 +2,7 @@
 
 namespace Vizir\KeycloakWebGuard\Services;
 
-use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -79,9 +79,10 @@ class KeycloakService
      * You can extend this service setting protected variables before call
      * parent constructor to comunicate with Keycloak smoothly.
      *
+     * @param ClientInterface $client
      * @return void
      */
-    public function __construct()
+    public function __construct(ClientInterface $client)
     {
         if (is_null($this->baseUrl)) {
             $this->baseUrl = trim(Config::get('keycloak-web.base_url'), '/');
@@ -111,8 +112,7 @@ class KeycloakService
             $this->redirectLogout = Config::get('keycloak-web.redirect_logout');
         }
 
-        $this->httpClient = new Client(Config::get('keycloak-web.guzzle_options', []));
-
+        $this->httpClient = $client;
         $this->openid = $this->getOpenIdConfiguration();
     }
 

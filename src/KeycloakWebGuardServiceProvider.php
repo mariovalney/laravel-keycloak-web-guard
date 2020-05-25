@@ -65,11 +65,9 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
 
         $this->app['router']->aliasMiddleware('keycloak-web-can', KeycloakCan::class);
 
-        $this->app->when(KeycloakService::class)
-            ->needs(ClientInterface::class)
-            ->give(static function() {
-                new Client(Config::get('keycloak-web.guzzle_options', []));
-            });
+        $this->app->when(KeycloakService::class)->needs(ClientInterface::class)->give(function() {
+            return new Client(Config::get('keycloak-web.guzzle_options', []));
+        });
     }
 
     /**

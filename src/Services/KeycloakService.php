@@ -113,7 +113,6 @@ class KeycloakService
         }
 
         $this->httpClient = $client;
-        $this->openid = $this->getOpenIdConfiguration();
     }
 
     /**
@@ -125,7 +124,7 @@ class KeycloakService
      */
     public function getLoginUrl()
     {
-        $url = $this->openid['authorization_endpoint'];
+        $url = $this->getOpenIdValue('authorization_endpoint');
         $params = [
             'scope' => 'openid',
             'client_id' => $this->clientId,
@@ -143,7 +142,7 @@ class KeycloakService
      */
     public function getLogoutUrl()
     {
-        $url = $this->openid['end_session_endpoint'];
+        $url = $this->getOpenIdValue('end_session_endpoint');
 
         if (empty($this->redirectLogout)) {
             $this->redirectLogout = url('/');
@@ -172,7 +171,7 @@ class KeycloakService
      */
     public function getAccessToken($code)
     {
-        $url = $this->openid['token_endpoint'];
+        $url = $this->getOpenIdValue('token_endpoint');
         $params = [
             'code' => $code,
             'client_id' => $this->clientId,
@@ -212,7 +211,7 @@ class KeycloakService
             return [];
         }
 
-        $url = $this->openid['token_endpoint'];
+        $url = $this->getOpenIdValue('token_endpoint');
         $params = [
             'client_id' => $this->clientId,
             'grant_type' => 'refresh_token',
@@ -248,7 +247,7 @@ class KeycloakService
      */
     public function invalidateRefreshToken($refreshToken)
     {
-        $url = $this->openid['end_session_endpoint'];
+        $url = $this->getOpenIdValue('end_session_endpoint');
         $params = [
             'client_id' => $this->clientId,
             'refresh_token' => $refreshToken,
@@ -282,7 +281,7 @@ class KeycloakService
             return [];
         }
 
-        $url = $this->openid['userinfo_endpoint'];
+        $url = $this->getOpenIdValue('userinfo_endpoint');
         $headers = [
             'Authorization' => 'Bearer ' . $credentials['access_token'],
             'Accept' => 'application/json',
@@ -400,6 +399,21 @@ class KeycloakService
         $query = array_merge($query, $params);
 
         return $url . '?' . Arr::query($query);
+    }
+
+    /**
+     * Return a value from the Open ID Configuration
+     * 
+     * @param  string $key
+     * @return string
+     */
+    protected function getOpenIdValue($key)
+    {
+        if (!$this->openid) {
+            $this->openid = $this->getOpenIdConfiguration();
+        }
+
+        return $this->openid[$key];
     }
 
     /**

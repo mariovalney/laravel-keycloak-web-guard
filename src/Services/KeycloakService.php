@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use Vizir\KeycloakWebGuard\Auth\Guard\KeycloakWebGuard;
+use Illuminate\Support\Arr;
 
 class KeycloakService
 {
@@ -413,7 +414,7 @@ class KeycloakService
             $this->openid = $this->getOpenIdConfiguration();
         }
 
-        return $this->openid[$key];
+        return Arr::get($this->openid, $key);
     }
 
     /**

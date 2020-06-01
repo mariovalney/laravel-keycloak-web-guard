@@ -403,13 +403,13 @@ class KeycloakService
 
     /**
      * Return a value from the Open ID Configuration
-     * 
+     *
      * @param  string $key
      * @return string
      */
     protected function getOpenIdValue($key)
     {
-        if (!$this->openid) {
+        if (! $this->openid) {
             $this->openid = $this->getOpenIdConfiguration();
         }
 

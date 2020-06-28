@@ -144,7 +144,7 @@ class KeycloakWebGuard implements Guard
     }
 
     /**
-     * Check user is authenticated and has a role
+     * Check user has a role
      *
      * @param array|string $roles
      * @param string $resource Default is empty: point to client_id
@@ -157,6 +157,43 @@ class KeycloakWebGuard implements Guard
             $resource = Config::get('keycloak-web.client_id');
         }
 
+        $token = $this->checkAuth();
+
+        $resourceRoles = $token['resource_access'] ?? [];
+        $resourceRoles = $resourceRoles[ $resource ] ?? [];
+        $resourceRoles = $resourceRoles['roles'] ?? [];
+
+        return empty(array_diff((array) $roles, $resourceRoles));
+    }
+
+    /**
+     * Check user has a permission
+     *
+     * @param array|string $permissions
+     * @param string $resource Default is empty: point to client_id
+     *
+     * @return boolean
+     */
+    public function hasPermission($permissions, $resource = '')
+    {
+        if (empty($resource)) {
+            $resource = Config::get('keycloak-web.client-id');
+        }
+
+        $token = $this->checkAuth();
+
+        $resourcePermissions = explode(' ', $token['scope']);
+
+        return empty(array_diff((array) $permissions, $resourcePermissions));
+    }
+
+    /**
+     * Check user is authenticated then return token
+     *
+     * @return $token
+     */
+    protected function checkAuth()
+    {
         if (! $this->check()) {
             return false;
         }
@@ -168,10 +205,7 @@ class KeycloakWebGuard implements Guard
         }
 
         $token = KeycloakWeb::parseAccessToken($token['access_token']);
-        $resourceRoles = $token['resource_access'] ?? [];
-        $resourceRoles = $resourceRoles[ $resource ] ?? [];
-        $resourceRoles = $resourceRoles['roles'] ?? [];
 
-        return empty(array_diff((array) $roles, $resourceRoles));
+        return $token;
     }
 }

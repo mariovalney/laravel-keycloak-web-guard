@@ -96,6 +96,20 @@ class KeycloakUser implements Authenticatable
     }
 
     /**
+     * Check user has permissions
+     *
+     * @see KeycloakWebGuard::hasPermission()
+     *
+     * @param  string|array  $permissions
+     * @param  string  $resource
+     * @return boolean
+     */
+    public function hasPermission($permissions, $resource = '')
+    {
+        return Auth::hasPermission($permissions, $resource);
+    }
+
+    /**
      * Get the password for the user.
      *
      * @return string

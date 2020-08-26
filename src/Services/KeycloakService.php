@@ -127,7 +127,7 @@ class KeycloakService
         $url = $this->getOpenIdValue('authorization_endpoint');
         $params = [
             'scope' => 'openid',
-            'client_id' => $this->clientId,
+            'client_id' => $this->getClientId(),
             'response_type' => 'code',
             'redirect_uri' => $this->callbackUrl,
         ];
@@ -148,7 +148,12 @@ class KeycloakService
             $this->redirectLogout = url('/');
         }
 
-        return $this->buildUrl($url, ['redirect_uri' => $this->redirectLogout]);
+        $params = [
+            'client_id' => $this->getClientId(),
+            'redirect_uri' => $this->redirectLogout,
+        ];
+
+        return $this->buildUrl($url, $params);
     }
 
     /**
@@ -174,7 +179,7 @@ class KeycloakService
         $url = $this->getOpenIdValue('token_endpoint');
         $params = [
             'code' => $code,
-            'client_id' => $this->clientId,
+            'client_id' => $this->getClientId(),
             'grant_type' => 'authorization_code',
             'redirect_uri' => $this->callbackUrl,
         ];
@@ -213,7 +218,7 @@ class KeycloakService
 
         $url = $this->getOpenIdValue('token_endpoint');
         $params = [
-            'client_id' => $this->clientId,
+            'client_id' => $this->getClientId(),
             'grant_type' => 'refresh_token',
             'refresh_token' => $credentials['refresh_token'],
             'redirect_uri' => $this->callbackUrl,
@@ -249,7 +254,7 @@ class KeycloakService
     {
         $url = $this->getOpenIdValue('end_session_endpoint');
         $params = [
-            'client_id' => $this->clientId,
+            'client_id' => $this->getClientId(),
             'refresh_token' => $refreshToken,
         ];
 
@@ -402,6 +407,16 @@ class KeycloakService
     }
 
     /**
+     * Return the client id for requests
+     *
+     * @return string
+     */
+    protected function getClientId()
+    {
+        return $this->clientId;
+    }
+
+    /**
      * Return a value from the Open ID Configuration
      *
      * @param  string $key
@@ -423,7 +438,7 @@ class KeycloakService
      */
     protected function getOpenIdConfiguration()
     {
-        $cacheKey = 'keycloak_web_guard_openid-' . $this->realm . '-' . $this->clientId;
+        $cacheKey = 'keycloak_web_guard_openid-' . $this->realm . '-' . md5($this->baseUrl);
 
         // From cache?
         if ($this->cacheOpenid) {

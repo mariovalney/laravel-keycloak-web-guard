@@ -2,9 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+### [2.1.0] - 2020-08-26
+
+* ClientID as method to allow override
+
 ### [2.0.0] - 2020-06-01
 
-* OpenID cnfiguration refactored.
+* OpenID configuration refactored.
 
 We'll request only if necessary.
 It's a breaking change if you extend **Services/KeycloakService.php**.

@@ -191,9 +191,17 @@ Route::group(['middleware' => 'keycloak-web'], function () {
 });
 ```
 
-### Where the access token is persisted?
+### Where the access/refresh tokens and state are persisted?
 
 On session. We recommend implement the database driver if you have load balance.
+
+### What's a state?
+
+State is a unique and non-guessable string used to mitigate CSRF attacks.
+
+We associate each authentication request about to be initiated with one random state and check on callback. You should do it if you are extending/implementing your own Auth controller.
+
+Use `KeycloakWeb::saveState()` method to save the already generated state to session and `KeycloakWeb::validateState()` to check the current state against the saved one.
 
 ### I'm having problems with session (stuck on login loop)
 
@@ -201,7 +209,7 @@ For some reason Laravel can present a problem with EncryptCookies middleware cha
 
 In this case, we will always try to login, as tokens cannot be retrieved.
 
-You can remove session_id cooki from encryption:
+You can remove session_id cookie from encryption:
 
 ```php
 // On your EncryptCookies middleware

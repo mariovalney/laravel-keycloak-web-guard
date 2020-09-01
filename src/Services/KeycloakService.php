@@ -19,6 +19,11 @@ class KeycloakService
     const KEYCLOAK_SESSION = '_keycloak_token';
 
     /**
+     * The Session key for state
+     */
+    const KEYCLOAK_SESSION_STATE = '_keycloak_state';
+
+    /**
      * Keycloak URL
      *
      * @var string
@@ -75,6 +80,13 @@ class KeycloakService
     protected $redirectLogout;
 
     /**
+     * The state for authorization request
+     *
+     * @var string
+     */
+    protected $state;
+
+    /**
      * The Constructor
      * You can extend this service setting protected variables before call
      * parent constructor to comunicate with Keycloak smoothly.
@@ -114,6 +126,7 @@ class KeycloakService
 
         $this->httpClient = $client;
         $this->openid = $this->getOpenIdConfiguration();
+        $this->state = $this->generateRandomState();
     }
 
     /**
@@ -131,6 +144,7 @@ class KeycloakService
             'client_id' => $this->clientId,
             'response_type' => 'code',
             'redirect_uri' => $this->callbackUrl,
+            'state' => $this->getState(),
         ];
 
         return $this->buildUrl($url, $params);
@@ -357,6 +371,49 @@ class KeycloakService
     }
 
     /**
+     * Validate State from Session
+     *
+     * @return void
+     */
+    public function validateState($state)
+    {
+        $challenge = session()->get(self::KEYCLOAK_SESSION_STATE);
+        return (! empty($state) && ! empty($challenge) && $challenge === $state);
+    }
+
+    /**
+     * Save State to Session
+     *
+     * @return void
+     */
+    public function saveState()
+    {
+        session()->put(self::KEYCLOAK_SESSION_STATE, $this->state);
+        session()->save();
+    }
+
+    /**
+     * Remove State from Session
+     *
+     * @return void
+     */
+    public function forgetState()
+    {
+        session()->forget(self::KEYCLOAK_SESSION_STATE);
+        session()->save();
+    }
+
+    /**
+     * Return the state for requests
+     *
+     * @return string
+     */
+    protected function getState()
+    {
+        return $this->state;
+    }
+
+    /**
      * Build a URL with params
      *
      * @param  string $url
@@ -531,5 +588,15 @@ class KeycloakService
     protected function base64UrlDecode($data)
     {
         return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
+    }
+
+    /**
+     * Return a random state parameter for authorization
+     *
+     * @return string
+     */
+    protected function generateRandomState()
+    {
+        return bin2hex(random_bytes(16));
     }
 }

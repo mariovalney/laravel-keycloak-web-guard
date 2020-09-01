@@ -18,6 +18,8 @@ class AuthController extends Controller
     public function login()
     {
         $url = KeycloakWeb::getLoginUrl();
+        KeycloakWeb::saveState();
+
         return redirect($url);
     }
 
@@ -54,6 +56,7 @@ class AuthController extends Controller
      */
     public function callback(Request $request)
     {
+        // Check for errors from Keycloak
         if (! empty($request->input('error'))) {
             $error = $request->input('error_description');
             $error = ($error) ?: $request->input('error');
@@ -61,6 +64,15 @@ class AuthController extends Controller
             throw new KeycloakCallbackException($error);
         }
 
+        // Check given state to mitigate CSRF attack
+        $state = $request->input('state');
+        if (empty($state) || ! KeycloakWeb::validateState($state)) {
+            KeycloakWeb::forgetState();
+
+            throw new KeycloakCallbackException('Invalid state');
+        }
+
+        // Change code for token
         $code = $request->input('code');
         if (! empty($code)) {
             $token = KeycloakWeb::getAccessToken($code);

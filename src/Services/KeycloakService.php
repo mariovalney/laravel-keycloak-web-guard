@@ -2,6 +2,7 @@
 
 namespace Vizir\KeycloakWebGuard\Services;
 
+use Exception;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Arr;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
+use Vizir\KeycloakWebGuard\Auth\KeycloakAccessToken;
 use Vizir\KeycloakWebGuard\Auth\Guard\KeycloakWebGuard;
 
 class KeycloakService
@@ -302,51 +304,47 @@ class KeycloakService
     {
         $credentials = $this->refreshTokenIfNeeded($credentials);
 
-        if (! is_array($credentials) || empty($credentials['access_token']) || empty($credentials['id_token'])) {
-            $this->forgetToken();
-            return [];
-        }
-
-        $url = $this->getOpenIdValue('userinfo_endpoint');
-        $headers = [
-            'Authorization' => 'Bearer ' . $credentials['access_token'],
-            'Accept' => 'application/json',
-        ];
-
         $user = [];
-
         try {
-            $response = $this->httpClient->request('GET', $url, ['headers' => $headers]);
+            // Validate JWT Token
+            $token = new KeycloakAccessToken($credentials);
 
-            if ($response->getStatusCode() === 200) {
-                $user = $response->getBody()->getContents();
-                $user = json_decode($user, true);
+            if (empty($token->getAccessToken())) {
+                throw new Exception('Access Token is invalid.');
             }
 
-            $this->validateProfileSub($credentials['id_token'], $user['sub'] ?? '');
+            $claims = array(
+                'aud' => $this->getClientId(),
+                'iss' => $this->getOpenIdValue('issuer'),
+            );
+
+            $token->validateIdToken($claims);
+
+            // Get userinfo
+            $url = $this->getOpenIdValue('userinfo_endpoint');
+            $headers = [
+                'Authorization' => 'Bearer ' . $token->getAccessToken(),
+                'Accept' => 'application/json',
+            ];
+
+            $response = $this->httpClient->request('GET', $url, ['headers' => $headers]);
+
+            if ($response->getStatusCode() !== 200) {
+                throw new Exception('Was not able to get userinfo (not 200)');
+            }
+
+            $user = $response->getBody()->getContents();
+            $user = json_decode($user, true);
+
+            // Validate retrieved user is owner of token
+            $token->validateSub($user['sub'] ?? '');
         } catch (GuzzleException $e) {
             $this->logException($e);
+        } catch (Exception $e) {
+            Log::error('[Keycloak Service] ' . print_r($e->getMessage(), true));
         }
 
         return $user;
-    }
-
-    /**
-     * Get Access Token data
-     *
-     * @param string $token
-     * @return array
-     */
-    public function parseAccessToken($token)
-    {
-        if (! is_string($token)) {
-            return [];
-        }
-
-        $token = explode('.', $token);
-        $token = $this->base64UrlDecode($token[1]);
-
-        return json_decode($token, true);
     }
 
     /**
@@ -552,10 +550,8 @@ class KeycloakService
             return $credentials;
         }
 
-        $info = $this->parseAccessToken($credentials['access_token']);
-        $exp = $info['exp'] ?? 0;
-
-        if (time() < $exp) {
+        $token = new KeycloakAccessToken($credentials);
+        if (! $token->hasExpired()) {
             return $credentials;
         }
 
@@ -568,28 +564,6 @@ class KeycloakService
 
         $this->saveToken($credentials);
         return $credentials;
-    }
-
-    /**
-     * Validate a Profile has a valid "sub"
-     *
-     * @link https://medium.com/@darutk/understanding-id-token-5f83f50fa02e
-     * @link https://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse
-     *
-     * @param  string $idToken
-     * @param  string $userSub
-     * @return void
-     */
-    protected function validateProfileSub($idToken, $userSub)
-    {
-        $sub = explode('.', $idToken);
-        $sub = $sub[1] ?? '';
-        $sub = json_decode($this->base64UrlDecode($sub), true);
-        $sub = $sub['sub'] ?? '';
-
-        if ($sub !== $userSub) {
-            throw new \Exception('[Keycloak Error] User Profile is invalid');
-        }
     }
 
     /**
@@ -611,19 +585,6 @@ class KeycloakService
         ];
 
         Log::error('[Keycloak Service] ' . print_r($error, true));
-    }
-
-    /**
-     * Base64UrlDecode string
-     *
-     * @link https://www.php.net/manual/pt_BR/function.base64-encode.php#103849
-     *
-     * @param  string $data
-     * @return string
-     */
-    protected function base64UrlDecode($data)
-    {
-        return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
     }
 
     /**

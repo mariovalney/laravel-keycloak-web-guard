@@ -119,13 +119,11 @@ class KeycloakWebGuard implements Guard
     {
         // Get Credentials
         $credentials = KeycloakWeb::retrieveToken();
-
         if (empty($credentials)) {
             return false;
         }
 
         $user = KeycloakWeb::getUserProfile($credentials);
-
         if (empty($user)) {
             KeycloakWeb::forgetToken();
 

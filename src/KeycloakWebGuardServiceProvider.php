@@ -84,26 +84,26 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
             'callback' => 'callback',
         ];
 
-        $options = Config::get('keycloak-web.routes', []);
-        $options = array_merge($defaults, $options);
+        $routes = Config::get('keycloak-web.routes', []);
+        $routes = array_merge($defaults, $routes);
 
         // Register Routes
         $router = $this->app->make('router');
 
-        if (! empty($options['login'])) {
-            $router->middleware('web')->get($options['login'], 'Vizir\KeycloakWebGuard\Controllers\AuthController@login')->name('keycloak.login');
+        if (! empty($routes['login'])) {
+            $router->middleware('web')->get($routes['login'], 'Vizir\KeycloakWebGuard\Controllers\AuthController@login')->name('keycloak.login');
         }
 
-        if (! empty($options['logout'])) {
-            $router->middleware('web')->get($options['logout'], 'Vizir\KeycloakWebGuard\Controllers\AuthController@logout')->name('keycloak.logout');
+        if (! empty($routes['logout'])) {
+            $router->middleware('web')->get($routes['logout'], 'Vizir\KeycloakWebGuard\Controllers\AuthController@logout')->name('keycloak.logout');
         }
 
-        if (! empty($options['register'])) {
-            $router->middleware('web')->get($options['register'], 'Vizir\KeycloakWebGuard\Controllers\AuthController@register')->name('keycloak.register');
+        if (! empty($routes['register'])) {
+            $router->middleware('web')->get($routes['register'], 'Vizir\KeycloakWebGuard\Controllers\AuthController@register')->name('keycloak.register');
         }
 
-        if (! empty($options['callback'])) {
-            $router->middleware('web')->get($options['callback'], 'Vizir\KeycloakWebGuard\Controllers\AuthController@callback')->name('keycloak.callback');
+        if (! empty($routes['callback'])) {
+            $router->middleware('web')->get($routes['callback'], 'Vizir\KeycloakWebGuard\Controllers\AuthController@callback')->name('keycloak.callback');
         }
     }
 }

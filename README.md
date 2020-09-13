@@ -19,9 +19,11 @@ It works on front. For APIs we recommend [laravel-keycloak-guard](https://github
 This package was tested with:
 
 * Laravel: 5.8 / 7
-* Keycloak: 4.8.3.Final
+* Keycloak: 4.8.3.Final / 11.0.2
 
-*Any other version is not guaranteed to work.*
+Any other version is not guaranteed to work.
+
+*This is project is open source and maintained on my free time. So, if you have any problem you can open a Issue with all details (laravel version, keycloak version, the description of problem...) and I'll be happy to try to help.*
 
 ## The flow
 

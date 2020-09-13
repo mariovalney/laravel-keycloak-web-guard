@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+### [2.1.2] - 2020-09-13
+
+* Implementing more auth checks.
+
+Props: @cyrillbolliger (for code review)
 
 ### [2.1.1] - 2020-09-01
 
@@ -10,7 +15,7 @@ All notable changes to this project will be documented in this file.
 Cyrill Bolliger alerted us today we were not using 'state' param on authentication request.
 He did a responsible disclosure to sending a e-mail and we are very grateful (I hope pay him a beer/coffee someday).
 
-Props: @cyrillbolliger
+Props: @cyrillbolliger (for code review)
 
 ### [2.1.0] - 2020-08-26
 

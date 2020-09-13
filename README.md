@@ -14,6 +14,15 @@ It works on front. For APIs we recommend [laravel-keycloak-guard](https://github
 * Have a Keycloak Server.
 * Have a realm configured and a client that accepts authentication.
 
+### Support
+
+This package was tested with:
+
+* Laravel: 5.8 / 7
+* Keycloak: 4.8.3.Final
+
+*Any other version is not guaranteed to work.*
+
 ## The flow
 
 1. User access a guarded route and is redirected to Keycloak login.

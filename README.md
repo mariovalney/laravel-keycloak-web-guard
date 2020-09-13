@@ -150,9 +150,39 @@ This method accept two parameters: the first is the role (string or array of str
 
 If not provided, resource will be the client_id, which is the regular check if you authenticating into this client to your front.
 
+### Keycloak Web Gate
+
+You can use [Laravel Authorization Gate](https://laravel.com/docs/7.x/authorization#gates) to check user against one or more roles (and resources).
+
+For example, in your Controller you can check **one role**:
+
+```php
+if (Gate::denies('keycloak-web', 'manage-account')) {
+  return abort(403);
+}
+```
+
+Or **multiple roles**:
+
+```php
+if (Gate::denies('keycloak-web', ['manage-account'])) {
+  return abort(403);
+}
+```
+
+And **roles for a resource**:
+
+```php
+if (Gate::denies('keycloak-web', 'manage-account', 'another-resource')) {
+  return abort(403);
+}
+```
+
+*This last use is not trivial, but you can extend the Guard to request authentication/authorization to multiple resources. By default, we request only the current client.*
+
 ### Keycloak Can Middleware
 
-You can check user against one or more roles using the `keycloak-web-can` Middleware.
+If you do not want to use the Gate or already implemented middlewares, you can check user against one or more roles using the `keycloak-web-can` Middleware.
 
 Add this to your Controller's `__construct` method:
 
@@ -163,7 +193,9 @@ $this->middleware('keycloak-web-can:manage-something-cool');
 $this->middleware('keycloak-web-can:manage-something-cool|manage-something-nice|manage-my-application');
 ```
 
-This middleware works searching for all roles on default resource (client_id). You can extend it and register your own middleware on Kernel.php or just use `Auth::hasRole($roles, $resource)` on your Controller.
+This middleware works searching for all roles on default resource (client_id).
+
+You can extend it and register your own middleware on Kernel.php or just use `Auth::hasRole($roles, $resource)` on your Controller.
 
 ## FAQ
 

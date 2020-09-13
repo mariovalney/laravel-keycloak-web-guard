@@ -8,6 +8,8 @@ All notable changes to this project will be documented in this file.
 
 Props: @cyrillbolliger (for code review)
 
+* Support to laravel Gate.
+
 ### [2.1.1] - 2020-09-01
 
 * Implementing state check on authorization flow.

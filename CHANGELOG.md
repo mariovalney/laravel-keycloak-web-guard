@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-### [2.1.2] - 2020-09-13
+### [2.2.0] - 2020-09-13
 
 * Implementing more auth checks.
 

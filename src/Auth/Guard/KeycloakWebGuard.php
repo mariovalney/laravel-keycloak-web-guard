@@ -6,11 +6,11 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
+use Vizir\KeycloakWebGuard\Auth\KeycloakAccessToken;
 use Vizir\KeycloakWebGuard\Exceptions\KeycloakCallbackException;
 use Vizir\KeycloakWebGuard\Models\KeycloakUser;
 use Vizir\KeycloakWebGuard\Facades\KeycloakWeb;
 use Illuminate\Contracts\Auth\UserProvider;
-
 class KeycloakWebGuard implements Guard
 {
     /**
@@ -165,7 +165,9 @@ class KeycloakWebGuard implements Guard
             return false;
         }
 
-        $token = KeycloakWeb::parseAccessToken($token['access_token']);
+        $token = new KeycloakAccessToken($token);
+        $token = $token->parseAccessToken();
+
         $resourceRoles = $token['resource_access'] ?? [];
         $resourceRoles = $resourceRoles[ $resource ] ?? [];
         $resourceRoles = $resourceRoles['roles'] ?? [];

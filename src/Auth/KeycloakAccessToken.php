@@ -89,7 +89,7 @@ class KeycloakAccessToken
      */
     public function hasExpired()
     {
-        $exp = $this->parseToken($this->accessToken);
+        $exp = $this->parseAccessToken();
         $exp = $exp['exp'] ?? '';
 
         return time() < (int) $exp;
@@ -103,7 +103,7 @@ class KeycloakAccessToken
      */
     public function validateIdToken($claims)
     {
-        $token = $this->parseToken($this->idToken);
+        $token = $this->parseIdToken();
         if (empty($token)) {
             throw new Exception('ID Token is invalid.');
         }
@@ -149,10 +149,30 @@ class KeycloakAccessToken
      */
     public function validateSub($userSub)
     {
-        $sub = $this->parseToken($this->idToken);
+        $sub = $this->parseIdToken();
         $sub = $sub['sub'] ?? '';
 
         return $sub === $userSub;
+    }
+
+    /**
+     * Parse the Access Token
+     *
+     * @return array
+     */
+    public function parseAccessToken()
+    {
+        return $this->parseToken($this->accessToken);
+    }
+
+    /**
+     * Parse the Id Token
+     *
+     * @return array
+     */
+    public function parseIdToken()
+    {
+        return $this->parseToken($this->idToken);
     }
 
     /**
@@ -161,7 +181,7 @@ class KeycloakAccessToken
      * @param string $token
      * @return array
      */
-    public function parseToken($token)
+    protected function parseToken($token)
     {
         if (! is_string($token)) {
             return [];

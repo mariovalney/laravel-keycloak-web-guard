@@ -7,6 +7,7 @@ use GuzzleHttp\ClientInterface;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Vizir\KeycloakWebGuard\Auth\Guard\KeycloakWebGuard;
 use Vizir\KeycloakWebGuard\Auth\KeycloakWebUserProvider;
@@ -33,6 +34,11 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
         // User Provider
         Auth::provider('keycloak-users', function($app, array $config) {
             return new KeycloakWebUserProvider($config['model']);
+        });
+
+        // Gate
+        Gate::define('keycloak-web', function ($user, $roles, $resource = '') {
+            return $user->hasRole($roles, $resource) ?: null;
         });
     }
 
@@ -63,8 +69,10 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
             KeycloakAuthenticated::class,
         ]);
 
+        // Add Middleware "keycloak-web-can"
         $this->app['router']->aliasMiddleware('keycloak-web-can', KeycloakCan::class);
 
+        // Bind for client data
         $this->app->when(KeycloakService::class)->needs(ClientInterface::class)->give(function() {
             return new Client(Config::get('keycloak-web.guzzle_options', []));
         });

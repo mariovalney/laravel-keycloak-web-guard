@@ -73,4 +73,12 @@ return [
     * @link http://docs.guzzlephp.org/en/stable/request-options.html
     */
    'guzzle_options' => [],
+
+   /**
+    * Admin Credentials
+    */
+    'admin' => [
+        'username' => env('KEYCLOAK_ADMIN_USERNAME', ''),
+        'password' => env('KEYCLOAK_ADMIN_PASSWORD', ''),
+    ]
 ];

@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Vizir\KeycloakWebGuard\Auth\Guard\KeycloakWebGuard;
 use Vizir\KeycloakWebGuard\Auth\KeycloakWebUserProvider;
+use Vizir\KeycloakWebGuard\Commands\KeycloakUserSync;
 use Vizir\KeycloakWebGuard\Middleware\KeycloakAuthenticated;
 use Vizir\KeycloakWebGuard\Middleware\KeycloakCan;
-use Vizir\KeycloakWebGuard\Models\KeycloakUser;
 use Vizir\KeycloakWebGuard\Services\KeycloakService;
 
 class KeycloakWebGuardServiceProvider extends ServiceProvider
@@ -30,6 +30,9 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
 
         $this->publishes([$config => config_path('keycloak-web.php')], 'config');
         $this->mergeConfigFrom($config, 'keycloak-web');
+        $this->commands([
+            KeycloakUserSync::class
+        ]);
 
         // User Provider
         Auth::provider('keycloak-users', function($app, array $config) {

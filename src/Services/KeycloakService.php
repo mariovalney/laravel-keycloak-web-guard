@@ -350,7 +350,7 @@ class KeycloakService
     /**
      * Retrieve Token from Session
      *
-     * @return void
+     * @return array|null
      */
     public function retrieveToken()
     {

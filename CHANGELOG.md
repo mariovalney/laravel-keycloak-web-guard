@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+### [2.3.0] - 2020-10-30
+
+* Support to Laravel 8.0
+
+Props: @matthewhall-ca
+
+* Support to laravel Gate.
+
 ### [2.2.0] - 2020-09-13
 
 * Implementing more auth checks.

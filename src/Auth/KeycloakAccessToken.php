@@ -92,7 +92,7 @@ class KeycloakAccessToken
         $exp = $this->parseAccessToken();
         $exp = $exp['exp'] ?? '';
 
-        return time() < (int) $exp;
+        return time() >= (int) $exp;
     }
 
     /**

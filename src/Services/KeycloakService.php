@@ -527,7 +527,7 @@ class KeycloakService
         } catch (GuzzleException $e) {
             $this->logException($e);
 
-            throw new \Exception('[Keycloak Error] It was not possible to load OpenId configuration: ' . $e->getMessage());
+            throw new Exception('[Keycloak Error] It was not possible to load OpenId configuration: ' . $e->getMessage());
         }
 
         // Save cache
@@ -574,13 +574,14 @@ class KeycloakService
      */
     protected function logException(GuzzleException $e)
     {
-        if (empty($e->getResponse())) {
+        // Guzzle 7
+        if (! method_exists($e, 'getResponse') || empty($e->getResponse())) {
             Log::error('[Keycloak Service] ' . $e->getMessage());
             return;
         }
 
         $error = [
-            'request' => $e->getRequest(),
+            'request' => method_exists($e, 'getRequest') ? $e->getRequest() : '',
             'response' => $e->getResponse()->getBody()->getContents(),
         ];
 

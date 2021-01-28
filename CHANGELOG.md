@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+### [2.3.2] - 2020-01-27
+
+* Support to Guzzle 7
+
 ### [2.3.1] - 2020-01-27
 
 * Fixed a problem in the expired check.

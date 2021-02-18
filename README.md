@@ -298,6 +298,6 @@ Just add the options you would like to `guzzle_options` array on `keycloak-web.p
 ## Developers
 
 * Mário Valney [@mariovalney](https://twitter.com/mariovalney)
-* [Vizir Software Sutdio](https://vizir.com.br)
+* [Vizir Software Studio](https://vizir.com.br)
 
 With contributors on GitHub :heart:

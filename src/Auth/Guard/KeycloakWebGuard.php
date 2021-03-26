@@ -11,6 +11,7 @@ use Vizir\KeycloakWebGuard\Exceptions\KeycloakCallbackException;
 use Vizir\KeycloakWebGuard\Models\KeycloakUser;
 use Vizir\KeycloakWebGuard\Facades\KeycloakWeb;
 use Illuminate\Contracts\Auth\UserProvider;
+
 class KeycloakWebGuard implements Guard
 {
     /**
@@ -173,5 +174,24 @@ class KeycloakWebGuard implements Guard
         $resourceRoles = $resourceRoles['roles'] ?? [];
 
         return empty(array_diff((array) $roles, $resourceRoles));
+    }
+    
+    /**
+     * Support to AuthenticateSession middleware.
+     *
+     * @return boolean
+     */
+    public function viaRemember()
+    {
+        return false;
+    }
+    
+    /**
+     * Support to AuthenticateSession middleware.
+     *
+     * @return void
+     */
+    public function logoutCurrentDevice()
+    {
     }
 }

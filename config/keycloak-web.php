@@ -66,6 +66,15 @@ return [
         'register' => 'register',
         'callback' => 'callback',
     ],
+    
+    
+    /**
+    * Define the route middleware.
+    * Add here any custom middleware that you want to be executed for the login routes.
+    /*
+    'middlewares' => [
+        'web',
+    ],
 
     /**
     * GuzzleHttp Client options

@@ -95,7 +95,7 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
         $routes = Config::get('keycloak-web.routes', []);
         $routes = array_merge($defaults, $routes);
         
-        $middlewares = Config::get('keycloak-web.middlewares', ['web'])
+        $middlewares = Config::get('keycloak-web.middlewares', ['web']);
 
 
         // Register Routes

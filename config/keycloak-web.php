@@ -69,11 +69,11 @@ return [
     
     
     /**
-    * Define the route middleware.
-    * Add here any custom middleware that you want to be executed for the login routes.
-    /*
+     * Define the route middleware.
+     * Add here any custom middleware that you want to be executed for the login routes.
+     */
     'middlewares' => [
-        'web',
+        'web'
     ],
 
     /**

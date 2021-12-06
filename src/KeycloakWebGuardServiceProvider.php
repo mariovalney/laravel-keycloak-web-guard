@@ -94,24 +94,27 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
 
         $routes = Config::get('keycloak-web.routes', []);
         $routes = array_merge($defaults, $routes);
+        
+        $middlewares = Config::get('keycloak-web.middlewares', ['web'])
+
 
         // Register Routes
         $router = $this->app->make('router');
 
         if (! empty($routes['login'])) {
-            $router->middleware('web')->get($routes['login'], 'Vizir\KeycloakWebGuard\Controllers\AuthController@login')->name('keycloak.login');
+            $router->middleware($middlewares)->get($routes['login'], 'Vizir\KeycloakWebGuard\Controllers\AuthController@login')->name('keycloak.login');
         }
 
         if (! empty($routes['logout'])) {
-            $router->middleware('web')->get($routes['logout'], 'Vizir\KeycloakWebGuard\Controllers\AuthController@logout')->name('keycloak.logout');
+            $router->middleware($middlewares)->get($routes['logout'], 'Vizir\KeycloakWebGuard\Controllers\AuthController@logout')->name('keycloak.logout');
         }
 
         if (! empty($routes['register'])) {
-            $router->middleware('web')->get($routes['register'], 'Vizir\KeycloakWebGuard\Controllers\AuthController@register')->name('keycloak.register');
+            $router->middleware($middlewares)->get($routes['register'], 'Vizir\KeycloakWebGuard\Controllers\AuthController@register')->name('keycloak.register');
         }
 
         if (! empty($routes['callback'])) {
-            $router->middleware('web')->get($routes['callback'], 'Vizir\KeycloakWebGuard\Controllers\AuthController@callback')->name('keycloak.callback');
+            $router->middleware($middlewares)->get($routes['callback'], 'Vizir\KeycloakWebGuard\Controllers\AuthController@callback')->name('keycloak.callback');
         }
     }
 }

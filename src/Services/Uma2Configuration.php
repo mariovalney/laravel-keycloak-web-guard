@@ -1,0 +1,85 @@
+<?php
+
+namespace Vizir\KeycloakWebGuard\Services;
+
+use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
+
+trait Uma2Configuration
+{
+    /**
+     * Keycloak Uma2 Configuration
+     *
+     * @var array
+     */
+    protected $uma2;
+
+    /**
+     * Keycloak Uma2 Cache Configuration
+     *
+     * @var array
+     */
+    protected $cacheUma2;
+
+    /**
+     * Return a value from the Uma2 Configuration
+     *
+     * @param  string $key
+     * @return string
+     */
+    protected function getUma2Value($key)
+    {
+        if (! $this->uma2) {
+            $this->uma2 = $this->getUma2Configuration();
+        }
+
+        return Arr::get($this->uma2, $key);
+    }
+
+    /**
+     * Retrieve Uma2 Endpoints
+     *
+     * @return array
+     */
+    protected function getUma2Configuration()
+    {
+        $cacheKey = 'keycloak_web_guard_uma2-' . $this->realm . '-' . md5($this->baseUrl);
+
+        // From cache?
+        if ($this->cacheUma2) {
+            $configuration = Cache::get($cacheKey, []);
+
+            if (! empty($configuration)) {
+                return $configuration;
+            }
+        }
+
+        // Request if cache empty or not using
+        $url = $this->baseUrl . '/realms/' . $this->realm;
+        $url = $url . '/.well-known/uma2-configuration';
+
+        $configuration = [];
+
+        try {
+            $response = $this->httpClient->request('GET', $url);
+
+            if ($response->getStatusCode() === 200) {
+                $configuration = $response->getBody()->getContents();
+                $configuration = json_decode($configuration, true);
+            }
+        } catch (GuzzleException $e) {
+            $this->logException($e);
+
+            throw new Exception('[Keycloak Error] It was not possible to load Uma2 configuration: ' . $e->getMessage());
+        }
+
+        // Save cache
+        if ($this->cacheUma2) {
+            Cache::put($cacheKey, $configuration);
+        }
+
+        return $configuration;
+
+    }
+}

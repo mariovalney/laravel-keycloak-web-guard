@@ -45,6 +45,14 @@ return [
     'cache_openid' => env('KEYCLOAK_CACHE_OPENID', false),
 
     /**
+     * We can cache the Uma2 Configuration
+     * The result from /realms/{realm-name}/.well-known/uma2-configuration
+     *
+     * @link https://www.keycloak.org/docs/latest/authorization_services/#_service_authorization_api
+     */
+    'cache_uma2' => env('KEYCLOAK_CACHE_UMA2', false),
+
+    /**
      * Page to redirect after callback if there's no "intent"
      *
      * @see Vizir\KeycloakWebGuard\Controllers\AuthController::callback()

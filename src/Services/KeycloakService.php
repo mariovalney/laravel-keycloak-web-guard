@@ -111,7 +111,7 @@ class KeycloakService
         }
 
         if (is_null($this->cacheUma2)) {
-            $this->cacheOpenid = Config::get('keycloak-web.cache_uma2', false);
+            $this->cacheUma2 = Config::get('keycloak-web.cache_uma2', false);
         }
 
         if (is_null($this->callbackUrl)) {

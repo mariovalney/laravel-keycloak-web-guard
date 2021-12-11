@@ -5,6 +5,8 @@ namespace Vizir\KeycloakWebGuard\Services;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
+use Vizir\KeycloakWebGuard\Auth\KeycloakAccessToken;
+use Vizir\KeycloakWebGuard\Auth\PartyToken;
 
 trait Uma2Configuration
 {
@@ -21,6 +23,41 @@ trait Uma2Configuration
      * @var array
      */
     protected $cacheUma2;
+
+    public function canAccess($resources = [], $scopes = [])
+    {
+        $token = new KeycloakAccessToken($this->retrieveToken());
+
+        $url = $this->getOpenIdValue('token_endpoint');
+
+        $headers = [
+            'Authorization' => 'Bearer ' . $token->getAccessToken(),
+            'Accept' => 'application/json',
+        ];
+
+        $params = [
+            'grant_type' => 'urn:ietf:params:oauth:grant-type:uma-ticket',
+            'audience'=> $this->getClientId(),
+            'permission' => $resources,
+        ];
+
+        $response = $this->httpClient->request('POST', $url, [
+            'headers' => $headers,
+            'form_params' => $params
+        ]);
+
+        if ($response->getStatusCode() !== 200) {
+            throw new Exception('Was not able to get permission');
+        }
+
+        $rpt = $response->getBody()->getContents();
+        $rpt = json_decode($rpt, true);
+
+        $authorizatonRequest = new PartyToken($rpt);
+
+        $authorizatonRequest = $authorizatonRequest->parseAccessToken();
+        dd($authorizatonRequest);
+    }
 
     /**
      * Return a value from the Uma2 Configuration

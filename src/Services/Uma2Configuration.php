@@ -2,9 +2,12 @@
 
 namespace Vizir\KeycloakWebGuard\Services;
 
+use App\Models\User;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Vizir\KeycloakWebGuard\Auth\KeycloakAccessToken;
 use Vizir\KeycloakWebGuard\Auth\PartyToken;
 
@@ -24,39 +27,60 @@ trait Uma2Configuration
      */
     protected $cacheUma2;
 
-    public function canAccess($resources = [], $scopes = [])
+    /**
+     * Verify if the user can access the resouces
+     * https://www.keycloak.org/docs/latest/authorization_services/index.html#_service_authorization_api
+     *
+     * @param array $resources
+     * @param array $scopes
+     * @throws GuzzleException
+     */
+    public function authorizations()
     {
+        $permissions = [];
+
         $token = new KeycloakAccessToken($this->retrieveToken());
 
-        $url = $this->getOpenIdValue('token_endpoint');
+        try {
+            $url = $this->getOpenIdValue('token_endpoint');
 
-        $headers = [
-            'Authorization' => 'Bearer ' . $token->getAccessToken(),
-            'Accept' => 'application/json',
-        ];
+            $headers = [
+                'Authorization' => 'Bearer ' . $token->getAccessToken(),
+                'Accept' => 'application/json',
+            ];
 
-        $params = [
-            'grant_type' => 'urn:ietf:params:oauth:grant-type:uma-ticket',
-            'audience'=> $this->getClientId(),
-            'permission' => $resources,
-        ];
+            $params = [
+                'grant_type' => 'urn:ietf:params:oauth:grant-type:uma-ticket',
+                'audience' => $this->getClientId(),
+                'response_mode' => 'permissions'
+            ];
 
-        $response = $this->httpClient->request('POST', $url, [
-            'headers' => $headers,
-            'form_params' => $params
-        ]);
+            $response = $this->httpClient->request('POST', $url, [
+                'headers' => $headers,
+                'form_params' => $params,
+            ]);
 
-        if ($response->getStatusCode() !== 200) {
-            throw new Exception('Was not able to get permission');
+            if ($response->getStatusCode() !== 200) {
+                throw new Exception('Was not able to get a Request Party Token');
+            }
+
+            $response = $response->getBody()->getContents();
+            $permissions = json_decode($response, true);
+
+            $permissions = collect($permissions)->map(function($resource){
+                return (object)[
+                    'name' => $resource['rsname'],
+                    'scopes' => $resource['scopes']
+                ];
+            });
+
+        } catch (GuzzleException $e) {
+            $this->logException($e);
+        } catch (\Exception $e) {
+            Log::error('[Keycloak Service] ' . print_r($e->getMessage(), true));
         }
 
-        $rpt = $response->getBody()->getContents();
-        $rpt = json_decode($rpt, true);
-
-        $authorizatonRequest = new PartyToken($rpt);
-
-        $authorizatonRequest = $authorizatonRequest->parseAccessToken();
-        dd($authorizatonRequest);
+        return $permissions;
     }
 
     /**

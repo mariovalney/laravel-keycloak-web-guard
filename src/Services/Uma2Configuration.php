@@ -28,7 +28,8 @@ trait Uma2Configuration
     protected $cacheUma2;
 
     /**
-     * Verify if the user can access the resouces
+     * Return resources and scopes for the authenticated user.
+     * 
      * https://www.keycloak.org/docs/latest/authorization_services/index.html#_service_authorization_api
      *
      * @param array $resources

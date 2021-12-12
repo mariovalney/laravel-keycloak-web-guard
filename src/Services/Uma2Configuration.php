@@ -29,7 +29,7 @@ trait Uma2Configuration
 
     /**
      * Return resources and scopes for the authenticated user.
-     * 
+     *
      * https://www.keycloak.org/docs/latest/authorization_services/index.html#_service_authorization_api
      *
      * @param array $resources
@@ -43,7 +43,7 @@ trait Uma2Configuration
         $token = new KeycloakAccessToken($this->retrieveToken());
 
         try {
-            $url = $this->getOpenIdValue('token_endpoint');
+            $url = $this->getUma2Value('token_endpoint');
 
             $headers = [
                 'Authorization' => 'Bearer ' . $token->getAccessToken(),

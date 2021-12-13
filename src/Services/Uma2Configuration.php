@@ -3,6 +3,7 @@
 namespace Vizir\KeycloakWebGuard\Services;
 
 use App\Models\User;
+use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
@@ -27,6 +28,14 @@ trait Uma2Configuration
      */
     protected $cacheUma2;
 
+
+    /**
+     * Cached resource scope responses.
+     *
+     * @var array
+     */
+    protected $cacheResourceScopes;
+
     /**
      * Return resources and scopes for the authenticated user.
      *
@@ -39,8 +48,19 @@ trait Uma2Configuration
     public function authorizations()
     {
         $permissions = [];
-
         $token = new KeycloakAccessToken($this->retrieveToken());
+
+        $cacheKey = 'keycloak_web_guard_uma2-' . $this->realm . '-' . md5($token->getAccessToken());
+        dd($cacheKey);
+
+        if($this->cacheResourceScopes) {
+            $permissions = Cache::get($cacheKey, []);
+            if (!empty($permissions)) {
+                dd($permissions);
+                return $permissions;
+            }
+        }
+
 
         try {
             $url = $this->getUma2Value('token_endpoint');
@@ -77,9 +97,11 @@ trait Uma2Configuration
 
         } catch (GuzzleException $e) {
             $this->logException($e);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('[Keycloak Service] ' . print_r($e->getMessage(), true));
         }
+
+        Cache::put($cacheKey, $permissions);
 
         return $permissions;
     }

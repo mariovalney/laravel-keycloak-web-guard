@@ -2,6 +2,7 @@
 
 namespace Vizir\KeycloakWebGuard\Services;
 
+use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;

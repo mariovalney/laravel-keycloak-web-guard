@@ -5,6 +5,7 @@ namespace Vizir\KeycloakWebGuard\Services;
 use App\Models\User;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
+use http\Exception\InvalidArgumentException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
@@ -28,14 +29,6 @@ trait Uma2Configuration
      */
     protected $cacheUma2;
 
-
-    /**
-     * Cached resource scope responses.
-     *
-     * @var array
-     */
-    protected $cacheResourceScopes;
-
     /**
      * Return resources and scopes for the authenticated user.
      *
@@ -47,20 +40,14 @@ trait Uma2Configuration
      */
     public function authorizations()
     {
-        $permissions = [];
         $token = new KeycloakAccessToken($this->retrieveToken());
 
-        $cacheKey = 'keycloak_web_guard_uma2-' . $this->realm . '-' . md5($token->getAccessToken());
-        dd($cacheKey);
+        $cacheKey = 'keycloak_web_guard_uma2-' . $this->realm . '-' . md5($token->parseAccessToken()['sid']);
 
-        if($this->cacheResourceScopes) {
-            $permissions = Cache::get($cacheKey, []);
-            if (!empty($permissions)) {
-                dd($permissions);
-                return $permissions;
-            }
+        $permissions = Cache::get($cacheKey, []);
+        if (!empty($permissions)) {
+            return $permissions;
         }
-
 
         try {
             $url = $this->getUma2Value('token_endpoint');
@@ -101,9 +88,47 @@ trait Uma2Configuration
             Log::error('[Keycloak Service] ' . print_r($e->getMessage(), true));
         }
 
+
         Cache::put($cacheKey, $permissions);
 
         return $permissions;
+    }
+
+    /**
+     * Validate if the authenticated user can access the given resource.
+     *
+     * @param $resource
+     * @return bool
+     * @throws GuzzleException
+     */
+    public function canAccess($resource)
+    {
+
+        if (!is_string($resource) || empty($resource)) return false;
+        $args = explode(':', $resource);
+
+        if (count($args) == 2) {
+
+
+            // Check if there an authorized resource on the authorizations list of the user.
+            $resource = $this->authorizations()
+                ->filter(fn($permission) => $permission->name == $args[0])
+                ->first();
+
+            // If there is no resource, it means that is not authorized
+            if (!$resource) return false;
+
+            // If the resource exists, we procced to check the scopes
+            // If the key scopes doesn't exists, it's because there are not scopes associated to
+            // this particular resource, we need a scope
+            if (!isset($resource->scopes)) return false;
+
+            // If the key scopes exists we check that the scope passed on the arguments
+            // is the one that the user can access
+            return in_array($args[1], $resource->scopes);
+        }
+
+        throw new InvalidArgumentException("The resource doesn't match the correct format");
     }
 
     /**

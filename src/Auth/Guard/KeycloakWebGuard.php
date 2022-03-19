@@ -39,6 +39,11 @@ class KeycloakWebGuard implements Guard
     {
         return (bool) $this->user();
     }
+    
+    public function hasUser()
+    {
+        return (bool) $this->user();
+    }
 
     /**
      * Determine if the current user is a guest.

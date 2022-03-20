@@ -2,40 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
-### [2.3.2] - 2020-01-27
+### [2.3.3] - 2022-03-20
 
-* Support to Guzzle 7
+* Support to Laravel 9.0. (props: @alvarofelipems)
+* Allow access list roles in the Guard. (props: @socieboy)
+* A typo in docs. (props: @atyakresna)
 
-### [2.3.1] - 2020-01-27
+### [2.3.2] - 2021-01-27
 
-* Fixed a problem in the expired check.
+* Support to Guzzle 7.
 
-Props: @gorkagv
+### [2.3.1] - 2021-01-27
+
+* Fixed a problem in the expired check. (props: @gorkagv)
 
 ### [2.3.0] - 2020-10-30
 
-* Support to Laravel 8.0
-
-Props: @matthewhall-ca
-
-* Support to laravel Gate.
+* Support to Laravel 8.0. (props: @matthewhall-ca)
+* Support to Laravel Gate.
 
 ### [2.2.0] - 2020-09-13
 
-* Implementing more auth checks.
-
-Props: @cyrillbolliger (for code review)
-
-* Support to laravel Gate.
+* Implementing more auth checks. (props for code review: @cyrillbolliger)
+* Support to Laravel Gate.
 
 ### [2.1.1] - 2020-09-01
 
-* Implementing state check on authorization flow.
+* Implementing state check on authorization flow. (props for code review: @cyrillbolliger)
 
 Cyrill Bolliger alerted us today we were not using 'state' param on authentication request.
 He did a responsible disclosure to sending a e-mail and we are very grateful (I hope pay him a beer/coffee someday).
-
-Props: @cyrillbolliger (for code review)
 
 ### [2.1.0] - 2020-08-26
 

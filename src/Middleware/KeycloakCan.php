@@ -5,6 +5,7 @@ namespace Vizir\KeycloakWebGuard\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 use Vizir\KeycloakWebGuard\Exceptions\KeycloakCanException;
+use App\Providers\RouteServiceProvider;
 
 class KeycloakCan extends KeycloakAuthenticated
 {
@@ -25,6 +26,10 @@ class KeycloakCan extends KeycloakAuthenticated
         $guards = explode('|', ($guards[0] ?? ''));
         if (Auth::hasRole($guards)) {
             return $next($request);
+        }
+        
+        if (Auth::check()) {
+            return redirect(RouteServiceProvider::HOME);
         }
 
         throw new KeycloakCanException(

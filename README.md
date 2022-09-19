@@ -285,7 +285,7 @@ If your client is not public, you should provide a `KEYCLOAK_CLIENT_SECRET` on y
 
 In some use cases you may need to override the default Guzzle options - likely either to disable SSL verification or to set a Proxy to route all requests through.
 
-Every [http://docs.guzzlephp.org/en/stable/request-options.html](Guzzle Request Option) is supported and is passed directly to the Guzzle Client instance.
+Every [Guzzle Request Option](http://docs.guzzlephp.org/en/stable/request-options.html) is supported and is passed directly to the Guzzle Client instance.
 
 Just add the options you would like to `guzzle_options` array on `keycloak-web.php` config file. For example:
 

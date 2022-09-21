@@ -27,8 +27,6 @@ class KeycloakCan extends KeycloakAuthenticated
             return $next($request);
         }
 
-        throw new KeycloakCanException(
-            'Unauthenticated.', $guards, $this->redirectTo($request)
-        );
+        abort(403);
     }
 }

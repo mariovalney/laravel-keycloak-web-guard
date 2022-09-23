@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+### [3.0.0] - 2022-09-23
+
+* Support to Keycloak 18+. (props: @serumk)
+
 ### [2.3.3] - 2022-03-20
 
 * Support to Laravel 9.0. (props: @alvarofelipems)

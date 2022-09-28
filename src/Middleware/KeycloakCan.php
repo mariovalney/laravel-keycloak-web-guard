@@ -28,6 +28,6 @@ class KeycloakCan extends KeycloakAuthenticated
             return $next($request);
         }
 
-        throw new AuthorizationException('Forbidden',403);
+        throw new AuthorizationException('Forbidden', 403);
     }
 }

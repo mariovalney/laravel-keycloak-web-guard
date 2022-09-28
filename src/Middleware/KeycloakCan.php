@@ -3,6 +3,7 @@
 namespace Vizir\KeycloakWebGuard\Middleware;
 
 use Closure;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Vizir\KeycloakWebGuard\Exceptions\KeycloakCanException;
 
@@ -27,8 +28,6 @@ class KeycloakCan extends KeycloakAuthenticated
             return $next($request);
         }
 
-        throw new KeycloakCanException(
-            'Unauthenticated.', $guards, $this->redirectTo($request)
-        );
+        throw new AuthorizationException('Forbidden', 403);
     }
 }

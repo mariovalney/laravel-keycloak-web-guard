@@ -3,9 +3,9 @@
 namespace Vizir\KeycloakWebGuard\Middleware;
 
 use Closure;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Vizir\KeycloakWebGuard\Exceptions\KeycloakCanException;
-use Illuminate\Auth\Access\AuthorizationException;
 
 class KeycloakCan extends KeycloakAuthenticated
 {

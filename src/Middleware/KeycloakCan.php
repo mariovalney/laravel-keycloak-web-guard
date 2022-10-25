@@ -24,10 +24,12 @@ class KeycloakCan extends KeycloakAuthenticated
         }
 
         $guards = explode('|', ($guards[0] ?? ''));
-        if (Auth::hasRole($guards)) {
-            return $next($request);
+        foreach ($guards AS $guard)
+        {
+            if (Auth::hasRole($guard)) {
+                return $next($request);
+            }
         }
-
         throw new AuthorizationException('Forbidden', 403);
     }
 }

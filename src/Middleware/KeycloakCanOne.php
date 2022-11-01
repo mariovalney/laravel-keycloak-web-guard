@@ -25,7 +25,6 @@ class KeycloakCanOne extends KeycloakAuthenticated
 
         $guards = explode('|', ($guards[0] ?? ''));
         foreach ($guards as $guard) {
-        {
             if (Auth::hasRole($guard)) {
                 return $next($request);
             }

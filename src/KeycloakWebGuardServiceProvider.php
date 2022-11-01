@@ -13,6 +13,7 @@ use Vizir\KeycloakWebGuard\Auth\Guard\KeycloakWebGuard;
 use Vizir\KeycloakWebGuard\Auth\KeycloakWebUserProvider;
 use Vizir\KeycloakWebGuard\Middleware\KeycloakAuthenticated;
 use Vizir\KeycloakWebGuard\Middleware\KeycloakCan;
+use Vizir\KeycloakWebGuard\Middleware\KeycloakCanOne;
 use Vizir\KeycloakWebGuard\Models\KeycloakUser;
 use Vizir\KeycloakWebGuard\Services\KeycloakService;
 
@@ -71,6 +72,9 @@ class KeycloakWebGuardServiceProvider extends ServiceProvider
 
         // Add Middleware "keycloak-web-can"
         $this->app['router']->aliasMiddleware('keycloak-web-can', KeycloakCan::class);
+
+        // Add Middleware "keycloak-web-can-one
+        $this->app['router']->aliasMiddleware('keycloak-web-can-one', KeycloakCanOne::class);
 
         // Bind for client data
         $this->app->when(KeycloakService::class)->needs(ClientInterface::class)->give(function() {

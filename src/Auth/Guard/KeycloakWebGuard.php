@@ -11,9 +11,12 @@ use Vizir\KeycloakWebGuard\Exceptions\KeycloakCallbackException;
 use Vizir\KeycloakWebGuard\Models\KeycloakUser;
 use Vizir\KeycloakWebGuard\Facades\KeycloakWeb;
 use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Auth\GuardHelpers;
 
 class KeycloakWebGuard implements Guard
 {
+    use GuardHelpers;
+    
     /**
      * @var null|Authenticatable|KeycloakUser
      */

@@ -427,7 +427,7 @@ class KeycloakService
     {
         $parsedUrl = parse_url($url);
         if (empty($parsedUrl['host'])) {
-            return trim($url, '?') . '?' . Arr::query($params);
+            return trim($url, '?') . '?' . http_build_query($params);
         }
 
         if (! empty($parsedUrl['port'])) {
@@ -459,7 +459,7 @@ class KeycloakService
 
         $query = array_merge($query, $params);
 
-        return $url . '?' . Arr::query($query);
+        return $url . '?' . http_build_query($query);
     }
 
     /**

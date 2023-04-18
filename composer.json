@@ -1,5 +1,5 @@
 {
-    "name": "vizir/laravel-keycloak-web-guard",
+    "name": "kogeva/laravel-keycloak-web-guard",
     "description": "Simple Keycloak Guard to Laravel Web Routes",
     "homepage": "https://github.com/Vizir/laravel-keycloak-web-guard",
     "license": "MIT",

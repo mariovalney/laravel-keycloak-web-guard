@@ -90,6 +90,16 @@ class KeycloakWebGuard implements Guard
         $user = $this->user();
         return $user->id ?? null;
     }
+    
+    /**
+    * Disable viaRemember methode used by some bundles (like filament)
+    *
+    * @return bool
+    */
+    public function viaRemember()
+    {
+        return false;
+    }
 
     /**
      * Validate a user's credentials.

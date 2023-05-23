@@ -2,6 +2,7 @@
 
 namespace Vizir\KeycloakWebGuard\Controllers;
 
+use Illuminate\Auth\Events\Logout;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -32,6 +33,7 @@ class AuthController extends Controller
     {
         $url = KeycloakWeb::getLogoutUrl();
         KeycloakWeb::forgetToken();
+        event(new Logout(Auth::getDefaultDriver(), Auth()->user()));
         return redirect($url);
     }
 

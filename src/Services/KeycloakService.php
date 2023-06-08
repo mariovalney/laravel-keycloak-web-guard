@@ -96,6 +96,11 @@ class KeycloakService
     protected $httpClient;
 
     /**
+     * @var array of strings
+     */
+    protected $scopes = ['openid'];
+
+    /**
      * The Constructor
      * You can extend this service setting protected variables before call
      * parent constructor to comunicate with Keycloak smoothly.
@@ -133,6 +138,8 @@ class KeycloakService
             $this->redirectLogout = Config::get('keycloak-web.redirect_logout');
         }
 
+        $this->scopes = array_merge($this->scopes, Config::get('keycloak-web.optional_scopes'));
+
         $this->state = $this->generateRandomState();
         $this->httpClient = $client;
     }
@@ -148,7 +155,7 @@ class KeycloakService
     {
         $url = $this->getOpenIdValue('authorization_endpoint');
         $params = [
-            'scope' => 'openid',
+            'scope' => implode(' ', $this->scopes),
             'response_type' => 'code',
             'client_id' => $this->getClientId(),
             'redirect_uri' => $this->callbackUrl,

@@ -20,6 +20,16 @@ class KeycloakWebGuard implements Guard
     protected $user;
 
     /**
+     * @var UserProvider
+     */
+    protected $provider;
+
+    /**
+     * @var Request
+     */
+    protected $request;
+
+    /**
      * Constructor.
      *
      * @param Request $request

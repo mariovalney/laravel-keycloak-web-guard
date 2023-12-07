@@ -11,19 +11,18 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use Vizir\KeycloakWebGuard\Auth\KeycloakAccessToken;
-use Vizir\KeycloakWebGuard\Auth\Guard\KeycloakWebGuard;
 
 class KeycloakService
 {
     /**
      * The Session key for token
      */
-    const KEYCLOAK_SESSION = '_keycloak_token';
+    public const KEYCLOAK_SESSION = '_keycloak_token';
 
     /**
      * The Session key for state
      */
-    const KEYCLOAK_SESSION_STATE = '_keycloak_state';
+    public const KEYCLOAK_SESSION_STATE = '_keycloak_state';
 
     /**
      * Keycloak URL
@@ -275,7 +274,7 @@ class KeycloakService
      * Invalidate Refresh
      *
      * @param  string $refreshToken
-     * @return array
+     * @return bool
      */
     public function invalidateRefreshToken($refreshToken)
     {
@@ -302,6 +301,7 @@ class KeycloakService
     /**
      * Get access token from Code
      * @param  array $credentials
+     * @throws Exception
      * @return array
      */
     public function getUserProfile($credentials)

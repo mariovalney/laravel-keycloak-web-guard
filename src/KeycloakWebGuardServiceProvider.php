@@ -14,7 +14,6 @@ use Vizir\KeycloakWebGuard\Auth\KeycloakWebUserProvider;
 use Vizir\KeycloakWebGuard\Middleware\KeycloakAuthenticated;
 use Vizir\KeycloakWebGuard\Middleware\KeycloakCan;
 use Vizir\KeycloakWebGuard\Middleware\KeycloakCanOne;
-use Vizir\KeycloakWebGuard\Models\KeycloakUser;
 use Vizir\KeycloakWebGuard\Services\KeycloakService;
 
 class KeycloakWebGuardServiceProvider extends ServiceProvider

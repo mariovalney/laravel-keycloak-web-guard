@@ -5,7 +5,6 @@ namespace Vizir\KeycloakWebGuard\Middleware;
 use Closure;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
-use Vizir\KeycloakWebGuard\Exceptions\KeycloakCanException;
 
 class KeycloakCanOne extends KeycloakAuthenticated
 {

@@ -15,10 +15,18 @@ class AuthController extends Controller
      *
      * @return view
      */
-    public function login()
+    public function login(Request $request)
     {
         $url = KeycloakWeb::getLoginUrl();
         KeycloakWeb::saveState();
+
+        if (class_exists('Inertia\Inertia')) {
+            if ($request->inertia()) {
+                // for Inertia AJAX requests, trigger a hard location change
+                // see https://inertiajs.com/redirects
+                return \Inertia\Inertia::location($url);
+            }
+        }
 
         return redirect($url);
     }

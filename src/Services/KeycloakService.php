@@ -138,7 +138,7 @@ class KeycloakService
             $this->redirectLogout = Config::get('keycloak-web.redirect_logout');
         }
 
-        $this->scopes = array_merge($this->scopes, Config::get('keycloak-web.optional_scopes'));
+        $this->scopes = array_merge($this->scopes, Config::get('keycloak-web.scopes'));
 
         $this->state = $this->generateRandomState();
         $this->httpClient = $client;

@@ -67,13 +67,13 @@ After publishing `config/keycloak-web.php` file, you can change the routes:
 The scope `openid` is always included, but if you need extra scopes you can add them as strings to the array:
 
 ```php
-'optional_scopes' => [],
+'scopes' => [],
 ```
 
 Example:
 
 ```php
-'optional_scopes' => ['exampleScope1', 'example_scope_2'],
+'scopes' => ['example_scope_1', 'example_scope_2'],
 ```
 
 Change any value to change the URL.

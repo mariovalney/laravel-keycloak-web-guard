@@ -79,5 +79,5 @@ return [
      *
      * array of strings
      */
-    'optional_scopes' => [],
+    'scopes' => [],
 ];

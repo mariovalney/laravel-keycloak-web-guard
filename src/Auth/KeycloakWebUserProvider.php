@@ -86,15 +86,15 @@ class KeycloakWebUserProvider implements UserProvider
     }
 
     /**
-     * Validate a user against the given credentials.
+     * Rehash the user's password if required and supported.
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  array  $credentials
      * @param  bool  $force
-     * @return bool
+     * @return void
      */
-    public function rehashPasswordIfRequired(Authenticatable $user, array $credentials, bool $force = false)
+    public function rehashPasswordIfRequired(UserContract $user, array $credentials, bool $force = false)
     {
-        return;
+        throw new \BadMethodCallException('Unexpected method [rehashPasswordIfRequired] call');
     }
 }

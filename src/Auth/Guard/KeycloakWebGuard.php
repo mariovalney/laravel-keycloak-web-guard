@@ -20,10 +20,15 @@ class KeycloakWebGuard implements Guard
     protected $user;
 
     /**
-     * Constructor.
-     *
-     * @param Request $request
+     * @var UserProvider
      */
+    protected $provider;
+
+    /**
+     * @var Request
+     */
+    protected $request;
+
     public function __construct(UserProvider $provider, Request $request)
     {
         $this->provider = $provider;
@@ -39,7 +44,10 @@ class KeycloakWebGuard implements Guard
     {
         return (bool) $this->user();
     }
-    
+
+    /**
+     * @return bool
+     */
     public function hasUser()
     {
         return (bool) $this->user();
@@ -72,7 +80,7 @@ class KeycloakWebGuard implements Guard
     /**
      * Set the current user.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param \Illuminate\Contracts\Auth\Authenticatable $user
      * @return void
      */
     public function setUser(?Authenticatable $user)
@@ -129,7 +137,7 @@ class KeycloakWebGuard implements Guard
      * Try to authenticate the user
      *
      * @throws KeycloakCallbackException
-     * @return boolean
+     * @return bool
      */
     public function authenticate()
     {
@@ -162,7 +170,7 @@ class KeycloakWebGuard implements Guard
      *
      * @param string $resource Default is empty: point to client_id
      *
-     * @return array
+     * @return bool|array
     */
     public function roles($resource = '')
     {
@@ -196,7 +204,7 @@ class KeycloakWebGuard implements Guard
      * @param array|string $roles
      * @param string $resource Default is empty: point to client_id
      *
-     * @return boolean
+     * @return bool
      */
     public function hasRole($roles, $resource = '')
     {

@@ -85,7 +85,7 @@ class KeycloakAccessToken
     /**
      * Check access token has expired
      *
-     * @return boolean
+     * @return bool
      */
     public function hasExpired()
     {
@@ -145,7 +145,7 @@ class KeycloakAccessToken
     /**
      * Validate sub from ID token
      *
-     * @return boolean
+     * @return bool
      */
     public function validateSub($userSub)
     {

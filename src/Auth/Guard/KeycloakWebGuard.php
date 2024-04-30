@@ -2,9 +2,11 @@
 
 namespace Vizir\KeycloakWebGuard\Auth\Guard;
 
+use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Vizir\KeycloakWebGuard\Auth\KeycloakAccessToken;
 use Vizir\KeycloakWebGuard\Exceptions\KeycloakCallbackException;
@@ -161,6 +163,8 @@ class KeycloakWebGuard implements Guard
         // Provide User
         $user = $this->provider->retrieveByCredentials($user);
         $this->setUser($user);
+
+        event(new Authenticated(Auth::getDefaultDriver(), Auth()->user()));
 
         return true;
     }

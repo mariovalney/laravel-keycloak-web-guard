@@ -11,19 +11,18 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use Vizir\KeycloakWebGuard\Auth\KeycloakAccessToken;
-use Vizir\KeycloakWebGuard\Auth\Guard\KeycloakWebGuard;
 
 class KeycloakService
 {
     /**
      * The Session key for token
      */
-    const KEYCLOAK_SESSION = '_keycloak_token';
+    public const KEYCLOAK_SESSION = '_keycloak_token';
 
     /**
      * The Session key for state
      */
-    const KEYCLOAK_SESSION_STATE = '_keycloak_state';
+    public const KEYCLOAK_SESSION_STATE = '_keycloak_state';
 
     /**
      * Keycloak URL
@@ -96,6 +95,11 @@ class KeycloakService
     protected $httpClient;
 
     /**
+     * @var array of strings
+     */
+    protected $scopes = ['openid'];
+
+    /**
      * The Constructor
      * You can extend this service setting protected variables before call
      * parent constructor to comunicate with Keycloak smoothly.
@@ -133,6 +137,8 @@ class KeycloakService
             $this->redirectLogout = Config::get('keycloak-web.redirect_logout');
         }
 
+        $this->scopes = array_merge($this->scopes, Config::get('keycloak-web.scopes'));
+
         $this->state = $this->generateRandomState();
         $this->httpClient = $client;
     }
@@ -148,7 +154,7 @@ class KeycloakService
     {
         $url = $this->getOpenIdValue('authorization_endpoint');
         $params = [
-            'scope' => 'openid',
+            'scope' => implode(' ', $this->scopes),
             'response_type' => 'code',
             'client_id' => $this->getClientId(),
             'redirect_uri' => $this->callbackUrl,
@@ -275,7 +281,7 @@ class KeycloakService
      * Invalidate Refresh
      *
      * @param  string $refreshToken
-     * @return array
+     * @return bool
      */
     public function invalidateRefreshToken($refreshToken)
     {
@@ -302,6 +308,7 @@ class KeycloakService
     /**
      * Get access token from Code
      * @param  array $credentials
+     * @throws Exception
      * @return array
      */
     public function getUserProfile($credentials)

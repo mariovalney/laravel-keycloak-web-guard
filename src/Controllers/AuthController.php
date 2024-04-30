@@ -3,6 +3,7 @@
 namespace Vizir\KeycloakWebGuard\Controllers;
 
 use Illuminate\Auth\Events\Logout;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +15,7 @@ class AuthController extends Controller
     /**
      * Redirect to login
      *
-     * @return view
+     * @return RedirectResponse
      */
     public function login()
     {
@@ -27,20 +28,22 @@ class AuthController extends Controller
     /**
      * Redirect to logout
      *
-     * @return view
+     * @return RedirectResponse
      */
     public function logout()
     {
         $url = KeycloakWeb::getLogoutUrl();
         KeycloakWeb::forgetToken();
+      
         event(new Logout(Auth::getDefaultDriver(), Auth()->user()));
+      
         return redirect($url);
     }
 
     /**
      * Redirect to register
      *
-     * @return view
+     * @return RedirectResponse
      */
     public function register()
     {
@@ -53,7 +56,7 @@ class AuthController extends Controller
      *
      * @throws KeycloakCallbackException
      *
-     * @return view
+     * @return RedirectResponse
      */
     public function callback(Request $request)
     {

@@ -3,7 +3,7 @@
     <img src="https://img.shields.io/packagist/dt/vizir/laravel-keycloak-web-guard.svg" />
 </p>
 
-# Keycloak Web Guard for Laravel
+# [NEEDS A MAINTAINER] Keycloak Web Guard for Laravel
 
 This packages allow you authenticate users with [Keycloak Server](https://www.keycloak.org).
 
@@ -18,7 +18,7 @@ It works on front. For APIs we recommend [laravel-keycloak-guard](https://github
 
 This package was tested with:
 
-* Laravel: 5.8 / 7 / 8 / 9
+* Laravel: 5.8 / 7 / 8 / 9 / 10
 * Keycloak: 18.0.0
 
 Any other version is not guaranteed to work.
@@ -62,6 +62,18 @@ After publishing `config/keycloak-web.php` file, you can change the routes:
     'register' => 'register',
     'callback' => 'callback',
 ]
+```
+
+The scope `openid` is always included, but if you need extra scopes you can add them as strings to the array:
+
+```php
+'scopes' => [],
+```
+
+Example:
+
+```php
+'scopes' => ['example_scope_1', 'example_scope_2'],
 ```
 
 Change any value to change the URL.

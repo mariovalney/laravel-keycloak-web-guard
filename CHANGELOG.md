@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+### [4.0.0] - 2024-04-30
+
+**UNTESTED VERSION**
+
+* Added another scopes to config (props: @Murielle666)
+* Added Authenticated/Logout events (props: @neemiasjr)
+* Removing deprecation warnings/future errors (props: @jesperbeisner)
+* Update KeycloakWebUserProvider to Laravel 11 (props: @hydrokat)
+  
 ### [3.0.1] - 2022-09-28
 
 * Fix #79 (looping on KeycloakCan error). (props: @andrex47)

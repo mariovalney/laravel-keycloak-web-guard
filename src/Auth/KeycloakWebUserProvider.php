@@ -84,4 +84,17 @@ class KeycloakWebUserProvider implements UserProvider
     {
         throw new \BadMethodCallException('Unexpected method [validateCredentials] call');
     }
+
+    /**
+     * Validate a user against the given credentials.
+     *
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param  array  $credentials
+     * @param  bool  $force
+     * @return bool
+     */
+    public function rehashPasswordIfRequired(Authenticatable $user, array $credentials, bool $force = false)
+    {
+        return;
+    }
 }

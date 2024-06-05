@@ -199,7 +199,10 @@ class KeycloakWebGuard implements Guard
         $resourceRoles = $resourceRoles[ $resource ] ?? [];
         $resourceRoles = $resourceRoles['roles'] ?? [];
 
-        return $resourceRoles;
+        $realmRoles = $token['realm_access'] ?? [];
+        $realmRoles = $realmRoles['roles'] ?? [];
+
+        return array_merge($resourceRoles, $realmRoles);
     }
 
     /**

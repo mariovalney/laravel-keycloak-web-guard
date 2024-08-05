@@ -18,7 +18,7 @@ It works on front. For APIs we recommend [laravel-keycloak-guard](https://github
 
 This package was tested with:
 
-* Laravel: 5.8 / 7 / 8 / 9 / 10
+* Laravel: 5.8 / 7 / 8 / 9 / 10 / 11
 * Keycloak: 18.0.0
 
 Any other version is not guaranteed to work.
@@ -310,6 +310,5 @@ Just add the options you would like to `guzzle_options` array on `keycloak-web.p
 ## Developers
 
 * Mário Valney [@mariovalney](https://twitter.com/mariovalney)
-* [Vizir Software Studio](https://vizir.com.br)
 
 With contributors on GitHub :heart:

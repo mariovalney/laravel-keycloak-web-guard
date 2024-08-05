@@ -2,15 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
-### [4.0.0] - 2024-04-30
+## 4.X - UNTESTED VERSION
 
-**UNTESTED VERSION**
+### [4.1.0] - 2024-08-05
+
+* Added realm roles (props: @serumk)
+
+### [4.0.1] - 2024-05-02
+
+* Update KeycloakUser to Laravel 11 (props: @a-andrianova-variti)
+
+### [4.0.0] - 2024-04-30
 
 * Added another scopes to config (props: @Murielle666)
 * Added Authenticated/Logout events (props: @neemiasjr)
 * Removing deprecation warnings/future errors (props: @jesperbeisner)
 * Update KeycloakWebUserProvider to Laravel 11 (props: @hydrokat)
-  
+
+## 3.X - Keycloak 18
+
 ### [3.0.1] - 2022-09-28
 
 * Fix #79 (looping on KeycloakCan error). (props: @andrex47)
@@ -18,6 +28,8 @@ All notable changes to this project will be documented in this file.
 ### [3.0.0] - 2022-09-23
 
 * Support to Keycloak >= 18. (props: @serumk)
+
+## 2.X - ROLES + Laravel 9
 
 ### [2.3.3] - 2022-03-20
 
@@ -63,10 +75,11 @@ It's a breaking change if you extend **Services/KeycloakService.php**.
 
 Props: @matthewhall-ca
 
-### [1.0.0 ~ 2.0.0] - 2020-06-05
+## 1.X - FIRST VERSION
 
-We start CHANGELOG on 2.0.0 ...
-So, here is a lot of changes to make the plugin stable.
+### [1.X.X] - 2020-06-05
+
+(We start CHANGELOG on 2.0.0)
 
 * Configurations
 * Auth based on Laravel

@@ -49,7 +49,7 @@ return [
      *
      * @see Vizir\KeycloakWebGuard\Controllers\AuthController::callback()
      */
-    'redirect_url' => '/admin',
+    'redirect_url' => env('KEYCLOAK_REDIRECT_URL', '/admin'),
 
     /**
      * The routes for authenticate

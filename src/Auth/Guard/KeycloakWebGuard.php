@@ -52,7 +52,7 @@ class KeycloakWebGuard implements Guard
      */
     public function hasUser()
     {
-        return (bool) $this->user();
+        return (bool) $this->user;
     }
 
     /**
@@ -100,7 +100,7 @@ class KeycloakWebGuard implements Guard
         $user = $this->user();
         return $user->id ?? null;
     }
-    
+
     /**
     * Disable viaRemember methode used by some bundles (like filament)
     *
@@ -168,7 +168,7 @@ class KeycloakWebGuard implements Guard
 
         return true;
     }
-    
+
     /**
      * Check user is authenticated and return his resource roles
      *

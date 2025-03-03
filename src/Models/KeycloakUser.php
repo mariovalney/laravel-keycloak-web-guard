@@ -25,6 +25,16 @@ class KeycloakUser implements Authenticatable
     protected $attributes = [];
 
     /**
+     * @var mixed
+     */
+    protected $id;
+
+    /**
+     * @var mixed|null
+     */
+    protected $email;
+
+    /**
      * Constructor
      *
      * @param array $profile Keycloak user info

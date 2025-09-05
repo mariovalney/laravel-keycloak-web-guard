@@ -112,6 +112,34 @@ We can cache the OpenId Configuration: it's a list of endpoints we require to Ke
 
 If you activate it, *remember to flush the cache* when change the realm or url.
 
+## Security Configuration
+
+For enhanced security, this package supports multiple ways to load OpenID configuration, avoiding public exposure of the `.well-known/openid-configuration` endpoint.
+
+### OpenID Configuration Sources
+
+You can configure how the OpenID configuration is loaded using the `KEYCLOAK_OPENID_SOURCE` environment variable:
+
+**Option 1: Remote (Default - Less Secure)**
+```env
+KEYCLOAK_OPENID_SOURCE=remote
+```
+Loads configuration from the public `.well-known/openid-configuration` endpoint.
+
+**Option 2: Local File (Recommended)**
+```env
+KEYCLOAK_OPENID_SOURCE=local
+KEYCLOAK_OPENID_LOCAL_PATH=/absolute/path/to/openid-configuration.json
+```
+Loads configuration from a local JSON file.
+
+**Option 3: Base64 Encoded (Highly Secure)**
+```env
+KEYCLOAK_OPENID_SOURCE=base64
+KEYCLOAK_OPENID_BASE64_CONFIG=eyJpc3N1ZXIiOiJodHRwczovL3lvdXIta2V5Y2xvYWstc2VydmVyLmNvbS9yZWFsbXMveW91ci1yZWFsbSIsIi4uLn0=
+```
+Stores configuration as base64-encoded JSON in environment variables.
+
 Just add the options you would like as an array to the" to "Just add the options you would like to guzzle_options array on keycloak-web.php config file. For example:
 
 ## Laravel Auth

@@ -511,7 +511,7 @@ class KeycloakService
      */
     protected function getOpenIdConfiguration()
     {
-        $cacheKey = 'keycloak_web_guard_openid-' . $this->realm . '-' . md5($this->baseUrl);
+        $cacheKey = 'keycloak_web_guard_openid-' . $this->realm . '-' . hash('sha256', $this->baseUrl);
 
         // From cache?
         if ($this->cacheOpenid) {
@@ -522,7 +522,39 @@ class KeycloakService
             }
         }
 
-        // Request if cache empty or not using
+        // Get configuration based on source type
+        $source = Config::get('keycloak-web.openid_source', 'remote');
+        $configuration = [];
+
+        switch ($source) {
+            case 'local':
+                $configuration = $this->loadOpenIdFromLocal();
+                break;
+            case 'base64':
+                $configuration = $this->loadOpenIdFromBase64();
+                break;
+            case 'remote':
+            default:
+                $configuration = $this->loadOpenIdFromRemote();
+                break;
+        }
+
+        // Save cache
+        if ($this->cacheOpenid && !empty($configuration)) {
+            Cache::put($cacheKey, $configuration);
+        }
+
+        return $configuration;
+    }
+
+    /**
+     * Load OpenID configuration from remote .well-known endpoint
+     *
+     * @return array
+     * @throws Exception
+     */
+    protected function loadOpenIdFromRemote()
+    {
         $url = $this->baseUrl . '/realms/' . $this->realm;
         $url = $url . '/.well-known/openid-configuration';
 
@@ -538,15 +570,73 @@ class KeycloakService
         } catch (GuzzleException $e) {
             $this->logException($e);
 
-            throw new Exception('[Keycloak Error] It was not possible to load OpenId configuration: ' . $e->getMessage());
-        }
-
-        // Save cache
-        if ($this->cacheOpenid) {
-            Cache::put($cacheKey, $configuration);
+            throw new Exception('[Keycloak Error] It was not possible to load OpenId configuration from remote: ' . $e->getMessage());
         }
 
         return $configuration;
+    }
+
+    /**
+     * Load OpenID configuration from local file
+     *
+     * @return array
+     * @throws Exception
+     */
+    protected function loadOpenIdFromLocal()
+    {
+        $localPath = Config::get('keycloak-web.openid_local_path');
+
+        if (empty($localPath) || !file_exists($localPath)) {
+            throw new Exception('[Keycloak Error] Local OpenID configuration file not found: ' . $localPath);
+        }
+
+        try {
+            $content = file_get_contents($localPath);
+            $configuration = json_decode($content, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new Exception('[Keycloak Error] Invalid JSON in local OpenID configuration file: ' . json_last_error_msg());
+            }
+
+            return $configuration;
+        } catch (Exception $e) {
+            Log::error('[Keycloak Service] Failed to load local OpenID configuration: ' . $e->getMessage());
+            throw new Exception('[Keycloak Error] It was not possible to load OpenId configuration from local file: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Load OpenID configuration from base64 encoded config
+     *
+     * @return array
+     * @throws Exception
+     */
+    protected function loadOpenIdFromBase64()
+    {
+        $base64Config = Config::get('keycloak-web.openid_base64_config');
+
+        if (empty($base64Config)) {
+            throw new Exception('[Keycloak Error] Base64 OpenID configuration is not set in config');
+        }
+
+        try {
+            $decoded = base64_decode($base64Config, true);
+
+            if ($decoded === false) {
+                throw new Exception('[Keycloak Error] Invalid base64 encoding in OpenID configuration');
+            }
+
+            $configuration = json_decode($decoded, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new Exception('[Keycloak Error] Invalid JSON in base64 OpenID configuration: ' . json_last_error_msg());
+            }
+
+            return $configuration;
+        } catch (Exception $e) {
+            Log::error('[Keycloak Service] Failed to load base64 OpenID configuration: ' . $e->getMessage());
+            throw new Exception('[Keycloak Error] It was not possible to load OpenId configuration from base64: ' . $e->getMessage());
+        }
     }
 
     /**

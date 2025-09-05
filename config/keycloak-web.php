@@ -45,6 +45,32 @@ return [
     'cache_openid' => env('KEYCLOAK_CACHE_OPENID', false),
 
     /**
+     * OpenID Configuration Source
+     * 
+     * Options:
+     * - 'remote': Fetch from the public .well-known endpoint (default, less secure)
+     * - 'local': Load from a local file path
+     * - 'base64': Load from base64 encoded configuration in env/config
+     */
+    'openid_source' => env('KEYCLOAK_OPENID_SOURCE', 'remote'),
+
+    /**
+     * Local OpenID Configuration File Path
+     * 
+     * Used when openid_source is 'local'
+     * Path to a local JSON file containing the OpenID configuration
+     */
+    'openid_local_path' => env('KEYCLOAK_OPENID_LOCAL_PATH', storage_path('app/keycloak/openid-configuration.json')),
+
+    /**
+     * Base64 Encoded OpenID Configuration
+     * 
+     * Used when openid_source is 'base64'
+     * Base64 encoded JSON string of the OpenID configuration
+     */
+    'openid_base64_config' => env('KEYCLOAK_OPENID_BASE64_CONFIG', null),
+
+    /**
      * Page to redirect after callback if there's no "intent"
      *
      * @see Vizir\KeycloakWebGuard\Controllers\AuthController::callback()

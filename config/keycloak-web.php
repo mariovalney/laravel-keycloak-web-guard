@@ -72,7 +72,7 @@ return [
     *
     * @link http://docs.guzzlephp.org/en/stable/request-options.html
     */
-   'guzzle_options' => [],
+    'guzzle_options' => [],
 
     /**
      * Keycloak optional scopes
